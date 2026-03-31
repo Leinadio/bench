@@ -1,3 +1,4 @@
+import json
 import uuid
 from datetime import datetime
 import psycopg2
@@ -37,6 +38,29 @@ def insert_sections(cursor, filing_id: str, sections: list[dict]):
             'INSERT INTO "Section" (id, "filingId", heading, depth, category, content, "orderIndex", "createdAt") VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
             (section_id, filing_id, section["heading"], section["depth"], section["category"], section["content"], section["order_index"], datetime.now()),
         )
+
+def delete_summaries(cursor, filing_id: str):
+    cursor.execute('DELETE FROM "CompanySummary" WHERE "filingId" = %s', (filing_id,))
+
+
+def insert_summaries(cursor, filing_id: str, company_id: str, summaries: list[dict]):
+    for summary in summaries:
+        summary_id = str(uuid.uuid4()).replace("-", "")[:25]
+        cursor.execute(
+            'INSERT INTO "CompanySummary" (id, "filingId", "companyId", theme, score, "scoreJustification", summary, "bulletPoints", "createdAt") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',
+            (
+                summary_id,
+                filing_id,
+                company_id,
+                summary["theme"],
+                summary["score"],
+                summary["scoreJustification"],
+                summary["summary"],
+                json.dumps(summary["bulletPoints"], ensure_ascii=False),
+                datetime.now(),
+            ),
+        )
+
 
 def mark_filing_done(cursor, filing_id: str):
     cursor.execute('UPDATE "Filing" SET status = %s, "parsedAt" = %s WHERE id = %s', ("done", datetime.now(), filing_id))
