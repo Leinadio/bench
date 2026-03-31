@@ -1,6 +1,16 @@
 import json
+import re
 from anthropic import Anthropic
 from pipeline.config import ANTHROPIC_API_KEY
+
+
+def _clean_json(raw: str) -> str:
+    """Strip markdown code fences if Claude wraps JSON in ```json...```."""
+    cleaned = raw.strip()
+    match = re.search(r"```(?:json)?\s*([\s\S]*?)```", cleaned)
+    if match:
+        return match.group(1).strip()
+    return cleaned
 
 VALID_THEMES = {"risk", "strategy", "governance", "esg", "financial"}
 
@@ -77,7 +87,7 @@ def generate_theme_summary(theme: str, sections: list[dict], company_name: str) 
         max_tokens=2048,
         messages=[{"role": "user", "content": prompt}],
     )
-    raw = response.content[0].text.strip()
+    raw = _clean_json(response.content[0].text)
     data = json.loads(raw)
     data["score"] = max(1, min(5, int(data.get("score", 3))))
     data["theme"] = theme
@@ -98,7 +108,7 @@ def generate_global_summary(theme_summaries: list[dict], company_name: str) -> d
         max_tokens=1024,
         messages=[{"role": "user", "content": prompt}],
     )
-    raw = response.content[0].text.strip()
+    raw = _clean_json(response.content[0].text)
     data = json.loads(raw)
     data["score"] = max(1, min(5, int(data.get("score", 3))))
     data["theme"] = "global"
