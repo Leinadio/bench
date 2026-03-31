@@ -1,14 +1,8 @@
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
-interface CompanyCardProps {
-  id: string;
-  name: string;
-  ticker: string;
-  sector: string;
-  filings: { id: string; year: number; status: string; sectionCount: number }[];
-}
+import { ScoreBar } from "./score-bar";
+import type { CompanyWithSummaries } from "@/lib/types";
 
 export function CompanyCard({
   id,
@@ -16,31 +10,33 @@ export function CompanyCard({
   ticker,
   sector,
   filings,
-}: CompanyCardProps) {
-  const latestFiling = filings[0];
-  const totalSections = filings.reduce((acc, f) => acc + f.sectionCount, 0);
+  globalSummary,
+  themeSummaries,
+}: CompanyWithSummaries) {
   return (
     <Link href={`/company/${id}`}>
-      <Card className="hover:border-primary/50 transition-colors cursor-pointer">
+      <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">{name}</CardTitle>
             <Badge variant="secondary">{ticker}</Badge>
           </div>
+          <p className="text-sm text-muted-foreground">{sector}</p>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <span>{sector}</span>
-            <span>
-              {filings.length} filing{filings.length > 1 ? "s" : ""}
-            </span>
-            <span>{totalSections} sections</span>
-          </div>
-          {latestFiling && (
-            <div className="mt-2 text-xs text-muted-foreground">
-              Dernier : {latestFiling.year} —{" "}
-              {latestFiling.status === "done" ? "Fait" : "En cours"}
-            </div>
+          {themeSummaries.length > 0 ? (
+            <>
+              <ScoreBar summaries={themeSummaries} size="sm" />
+              {globalSummary && (
+                <p className="text-xs text-muted-foreground mt-3 line-clamp-2">
+                  {globalSummary.summary}
+                </p>
+              )}
+            </>
+          ) : (
+            <p className="text-xs text-muted-foreground">
+              {filings.length > 0 ? "Fiches en cours..." : "Aucun DEU index\u00e9"}
+            </p>
           )}
         </CardContent>
       </Card>
