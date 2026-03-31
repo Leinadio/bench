@@ -1,0 +1,48 @@
+[
+  {
+    "name": "TotalEnergies",
+    "ticker": "TTE",
+    "index": "CAC40",
+    "sector": "Energy",
+    "country": "FR",
+    "filings": [
+      {
+        "year": 2024,
+        "zip_url": "https://totalenergies.com/system/files/documents/totalenergies_universal-registration-document-2024_2025_en.zip",
+        "xhtml_url": "https://publications.totalenergies.com/DEU_2024/totalenergies_universal-registration-document-2024_2025_en.xhtml"
+      }
+    ]
+  },
+  {
+    "name": "LVMH",
+    "ticker": "MC",
+    "index": "CAC40",
+    "sector": "Luxury",
+    "country": "FR",
+    "filings": []
+  },
+  {
+    "name": "L'Oréal",
+    "ticker": "OR",
+    "index": "CAC40",
+    "sector": "Consumer",
+    "country": "FR",
+    "filings": []
+  },
+  {
+    "name": "Sanofi",
+    "ticker": "SAN",
+    "index": "CAC40",
+    "sector": "Healthcare",
+    "country": "FR",
+    "filings": []
+  },
+  {
+    "name": "Schneider Electric",
+    "ticker": "SU",
+    "index": "CAC40",
+    "sector": "Industrials",
+    "country": "FR",
+    "filings": []
+  }
+]
