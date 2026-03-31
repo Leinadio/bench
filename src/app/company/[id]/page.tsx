@@ -2,115 +2,94 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { SectionNav } from "@/components/company/section-nav";
-import { SectionContent } from "@/components/company/section-content";
+import { CompanySnapshot } from "@/components/company/company-snapshot";
+import { ThemeCard } from "@/components/company/theme-card";
 import { QAChat } from "@/components/company/qa-chat";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { THEME_ORDER } from "@/lib/types";
+import type { CompanySummary, Theme } from "@/lib/types";
 
-interface Section {
-  id: string;
-  heading: string;
-  depth: number;
-  category: string;
-  content: string;
-  orderIndex: number;
-}
-
-interface Filing {
-  id: string;
-  year: number;
-  sections: Section[];
-}
-
-interface CompanyDetail {
+interface CompanyDetailData {
   id: string;
   name: string;
   ticker: string;
   sector: string;
-  filings: Filing[];
+  filings: {
+    id: string;
+    year: number;
+    summaries: CompanySummary[];
+    sectionsByTheme: Record<
+      string,
+      { id: string; heading: string; content: string }[]
+    >;
+  }[];
 }
 
 export default function CompanyPage() {
   const params = useParams();
-  const [company, setCompany] = useState<CompanyDetail | null>(null);
-  const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
-  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  const [company, setCompany] = useState<CompanyDetailData | null>(null);
   const [activeFilingIndex, setActiveFilingIndex] = useState(0);
 
   useEffect(() => {
     fetch(`/api/companies/${params.id}`)
       .then((r) => r.json())
-      .then((data) => {
-        setCompany(data);
-        if (data.filings?.[0]?.sections?.[0]) {
-          setActiveSectionId(data.filings[0].sections[0].id);
-        }
-      });
+      .then(setCompany);
   }, [params.id]);
 
-  if (!company) return <p className="text-muted-foreground">Chargement...</p>;
+  if (!company)
+    return <p className="text-muted-foreground p-6">Chargement...</p>;
 
   const filing = company.filings[activeFilingIndex];
-  if (!filing) return <p>Aucun filing disponible.</p>;
+  if (!filing) return <p className="p-6">Aucun DEU disponible.</p>;
 
-  const activeSection = filing.sections.find((s) => s.id === activeSectionId);
+  const globalSummary =
+    filing.summaries.find((s) => s.theme === "global") || null;
+  const themeSummaries = filing.summaries.filter((s) => s.theme !== "global");
 
   return (
-    <div className="flex flex-col h-full -m-6">
-      <div className="p-6 pb-3 border-b">
-        <h1 className="text-2xl font-bold">
-          {company.name} ({company.ticker})
-        </h1>
-        <p className="text-muted-foreground">{company.sector}</p>
-        {company.filings.length > 1 && (
-          <div className="flex gap-2 mt-2">
-            {company.filings.map((f, i) => (
-              <button
-                key={f.id}
-                onClick={() => {
-                  setActiveFilingIndex(i);
-                  setActiveSectionId(f.sections[0]?.id || null);
-                }}
-                className={`text-sm px-3 py-1 rounded ${
-                  i === activeFilingIndex
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted"
-                }`}
-              >
-                {f.year}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-      <div className="flex flex-1 overflow-hidden">
-        <SectionNav
-          sections={filing.sections}
-          activeId={activeSectionId}
-          onSelect={setActiveSectionId}
-          categoryFilter={categoryFilter}
-          onCategoryFilter={setCategoryFilter}
-        />
-        <div className="flex-1 overflow-auto p-6">
-          <Tabs defaultValue="content">
-            <TabsList>
-              <TabsTrigger value="content">Contenu</TabsTrigger>
-              <TabsTrigger value="qa">Q&A</TabsTrigger>
-            </TabsList>
-            <TabsContent value="content" className="mt-4">
-              {activeSection ? (
-                <SectionContent {...activeSection} />
-              ) : (
-                <p className="text-muted-foreground">
-                  Selectionnez une section.
-                </p>
-              )}
-            </TabsContent>
-            <TabsContent value="qa" className="mt-4">
-              <QAChat filingId={filing.id} />
-            </TabsContent>
-          </Tabs>
+    <div className="max-w-4xl mx-auto">
+      {company.filings.length > 1 && (
+        <div className="flex gap-2 mb-4">
+          {company.filings.map((f, i) => (
+            <button
+              key={f.id}
+              onClick={() => setActiveFilingIndex(i)}
+              className={`text-sm px-3 py-1 rounded ${
+                i === activeFilingIndex
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted hover:bg-muted/80"
+              }`}
+            >
+              DEU {f.year}
+            </button>
+          ))}
         </div>
+      )}
+
+      <CompanySnapshot
+        name={company.name}
+        ticker={company.ticker}
+        sector={company.sector}
+        globalSummary={globalSummary}
+        themeSummaries={themeSummaries}
+      />
+
+      <div className="mt-8 space-y-3">
+        <h2 className="text-lg font-semibold">Fiches th&eacute;matiques</h2>
+        {THEME_ORDER.map((theme) => {
+          const summary = themeSummaries.find((s) => s.theme === theme);
+          if (!summary) return null;
+          return (
+            <ThemeCard
+              key={theme}
+              summary={summary}
+              sourceSections={filing.sectionsByTheme[theme]}
+            />
+          );
+        })}
+      </div>
+
+      <div className="mt-8 border-t pt-6">
+        <QAChat filingId={filing.id} />
       </div>
     </div>
   );
