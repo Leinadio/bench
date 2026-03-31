@@ -23,8 +23,8 @@ export function ThemeCard({ summary, sourceSections }: ThemeCardProps) {
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <Card className="transition-colors hover:border-primary/30">
-        <CollapsibleTrigger asChild>
-          <CardHeader className="cursor-pointer">
+        <CardHeader className="cursor-pointer p-0">
+          <CollapsibleTrigger className="w-full text-left p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <ScoreBadge score={summary.score} label="" size="sm" />
@@ -41,8 +41,8 @@ export function ThemeCard({ summary, sourceSections }: ThemeCardProps) {
                 {open ? "\u25B2" : "\u25BC"}
               </span>
             </div>
-          </CardHeader>
-        </CollapsibleTrigger>
+          </CollapsibleTrigger>
+        </CardHeader>
         <CollapsibleContent>
           <CardContent className="pt-0">
             <div className="mb-3">
