@@ -1,0 +1,4 @@
+-- This migration intentionally left empty.
+-- The search_vector column, GIN index, and trigger on Section are managed
+-- by the 20260331180000_add_fts migration (raw SQL) and should not be
+-- dropped by Prisma, as they are not represented in the Prisma schema.

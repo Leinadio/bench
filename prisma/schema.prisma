@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Company {
+  id      String   @id @default(cuid())
+  name    String
+  ticker  String   @unique
+  index   String
+  sector  String
+  country String   @default("FR")
+  filings Filing[]
+
+  createdAt DateTime @default(now())
+}
+
+model Filing {
+  id        String   @id @default(cuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
+  year      Int
+  sourceUrl String
+  status    String   @default("pending")
+  parsedAt  DateTime?
+
+  sections      Section[]
+  financialData FinancialData[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([companyId, year])
+}
+
+model Section {
+  id       String @id @default(cuid())
+  filingId String
+  filing   Filing @relation(fields: [filingId], references: [id])
+
+  heading    String
+  depth      Int      @default(1)
+  category   String   @default("other")
+  content    String
+  orderIndex Int      @default(0)
+
+  searchVector Unsupported("tsvector")? @map("search_vector")
+
+  createdAt DateTime @default(now())
+
+  @@index([filingId])
+  @@index([category])
+  @@index([searchVector], type: Gin, map: "Section_search_vector_idx")
+}
+
+model FinancialData {
+  id       String @id @default(cuid())
+  filingId String
+  filing   Filing @relation(fields: [filingId], references: [id])
+
+  tagName     String
+  value       String
+  unit        String?
+  periodStart DateTime?
+  periodEnd   DateTime?
+
+  @@index([filingId])
+  @@index([tagName])
+}
