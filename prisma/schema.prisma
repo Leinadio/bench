@@ -14,7 +14,8 @@ model Company {
   index   String
   sector  String
   country String   @default("FR")
-  filings Filing[]
+  filings   Filing[]
+  summaries CompanySummary[]
 
   createdAt DateTime @default(now())
 }
@@ -30,6 +31,7 @@ model Filing {
 
   sections      Section[]
   financialData FinancialData[]
+  summaries     CompanySummary[]
 
   createdAt DateTime @default(now())
 
@@ -69,4 +71,23 @@ model FinancialData {
 
   @@index([filingId])
   @@index([tagName])
+}
+
+model CompanySummary {
+  id        String  @id @default(cuid())
+  filingId  String
+  filing    Filing  @relation(fields: [filingId], references: [id])
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  theme              String
+  score              Int
+  scoreJustification String
+  summary            String
+  bulletPoints       Json
+
+  createdAt DateTime @default(now())
+
+  @@unique([filingId, theme])
+  @@index([companyId])
 }
