@@ -35,6 +35,10 @@ yarn-error.log*
 
 # python
 pipeline/venv/
+__pycache__/
+
+# data downloads
+data/downloads/
 
 # vercel
 .vercel
