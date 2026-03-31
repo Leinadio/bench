@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import type { CompanySummary, Theme } from "@/lib/types";
 
 export async function GET(
   _request: Request,
@@ -15,12 +16,21 @@ export async function GET(
             select: {
               id: true,
               heading: true,
-              depth: true,
               category: true,
               content: true,
               orderIndex: true,
             },
             orderBy: { orderIndex: "asc" },
+          },
+          summaries: {
+            select: {
+              id: true,
+              theme: true,
+              score: true,
+              scoreJustification: true,
+              summary: true,
+              bulletPoints: true,
+            },
           },
         },
         orderBy: { year: "desc" },
@@ -32,5 +42,42 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  return NextResponse.json(company);
+  const result = {
+    id: company.id,
+    name: company.name,
+    ticker: company.ticker,
+    sector: company.sector,
+    filings: company.filings.map((f) => {
+      const summaries: CompanySummary[] = f.summaries.map((s) => ({
+        id: s.id,
+        theme: s.theme as Theme,
+        score: s.score,
+        scoreJustification: s.scoreJustification,
+        summary: s.summary,
+        bulletPoints: s.bulletPoints as string[],
+      }));
+
+      const sectionsByTheme: Record<string, { id: string; heading: string; content: string }[]> = {};
+      for (const section of f.sections) {
+        const theme = section.category;
+        if (!sectionsByTheme[theme]) {
+          sectionsByTheme[theme] = [];
+        }
+        sectionsByTheme[theme].push({
+          id: section.id,
+          heading: section.heading,
+          content: section.content,
+        });
+      }
+
+      return {
+        id: f.id,
+        year: f.year,
+        summaries,
+        sectionsByTheme,
+      };
+    }),
+  };
+
+  return NextResponse.json(result);
 }

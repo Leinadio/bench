@@ -1,18 +1,28 @@
 export type SectionCategory = "risk" | "strategy" | "governance" | "esg" | "financial" | "other";
 
-export interface SearchResult {
+export type Theme = "risk" | "strategy" | "governance" | "esg" | "financial" | "global";
+
+export const THEME_LABELS: Record<Theme, string> = {
+  risk: "Risques",
+  strategy: "Stratégie",
+  governance: "Gouvernance",
+  esg: "ESG",
+  financial: "Finance",
+  global: "Global",
+};
+
+export const THEME_ORDER: Theme[] = ["risk", "strategy", "governance", "esg", "financial"];
+
+export interface CompanySummary {
   id: string;
-  heading: string;
-  category: SectionCategory;
-  content: string;
-  snippet: string;
-  companyName: string;
-  companyTicker: string;
-  filingYear: number;
-  rank: number;
+  theme: Theme;
+  score: number;
+  scoreJustification: string;
+  summary: string;
+  bulletPoints: string[];
 }
 
-export interface CompanyWithFilings {
+export interface CompanyWithSummaries {
   id: string;
   name: string;
   ticker: string;
@@ -23,5 +33,20 @@ export interface CompanyWithFilings {
     year: number;
     status: string;
     sectionCount: number;
+  }[];
+  globalSummary: CompanySummary | null;
+  themeSummaries: CompanySummary[];
+}
+
+export interface CompanyDetail {
+  id: string;
+  name: string;
+  ticker: string;
+  sector: string;
+  filings: {
+    id: string;
+    year: number;
+    summaries: CompanySummary[];
+    sectionsByTheme: Record<string, { id: string; heading: string; content: string }[]>;
   }[];
 }
