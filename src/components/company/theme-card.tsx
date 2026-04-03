@@ -1,15 +1,35 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ScoreBadge } from "./score-badge";
-import { THEME_LABELS } from "@/lib/types";
-import type { CompanySummary, Theme } from "@/lib/types";
+import type { CompanySummary } from "@/lib/types";
+import {
+  ShieldAlert,
+  Compass,
+  ChevronDown,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+export const THEME_CONFIG: Record<
+  string,
+  { icon: LucideIcon; accent: string; bg: string }
+> = {
+  risk: {
+    icon: ShieldAlert,
+    accent: "text-red-500",
+    bg: "bg-red-50",
+  },
+  strategy: {
+    icon: Compass,
+    accent: "text-blue-500",
+    bg: "bg-blue-50",
+  },
+};
 
 interface ThemeCardProps {
   summary: CompanySummary;
@@ -17,76 +37,114 @@ interface ThemeCardProps {
 }
 
 export function ThemeCard({ summary, sourceSections }: ThemeCardProps) {
-  const [open, setOpen] = useState(false);
   const [sourceOpen, setSourceOpen] = useState(false);
+  const [openCategories, setOpenCategories] = useState<Set<number>>(
+    new Set([0])
+  );
+  const hasSourceSections = sourceSections && sourceSections.length > 0;
+
+  const toggleCategory = (index: number) => {
+    setOpenCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
 
   return (
-    <Collapsible open={open} onOpenChange={setOpen}>
-      <Card className="transition-colors hover:border-primary/30">
-        <CardHeader className="cursor-pointer p-0">
-          <CollapsibleTrigger className="w-full text-left p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <ScoreBadge score={summary.score} label="" size="sm" />
-                <div>
-                  <CardTitle className="text-base">
-                    {THEME_LABELS[summary.theme as Theme] || summary.theme}
-                  </CardTitle>
-                  <p className="text-sm text-muted-foreground mt-0.5">
-                    {summary.summary.split(".")[0]}.
-                  </p>
-                </div>
-              </div>
-              <span className="text-muted-foreground text-sm">
-                {open ? "\u25B2" : "\u25BC"}
-              </span>
-            </div>
-          </CollapsibleTrigger>
-        </CardHeader>
-        <CollapsibleContent>
-          <CardContent className="pt-0">
-            <div className="mb-3">
-              <p className="text-sm font-medium text-muted-foreground mb-1">
-                Score : {summary.score}/5 &mdash; {summary.scoreJustification}
-              </p>
-            </div>
-            <p className="text-sm mb-4">{summary.summary}</p>
-            <h4 className="text-sm font-semibold mb-2">Points cl&eacute;s</h4>
-            <ul className="space-y-1.5 mb-4">
-              {summary.bulletPoints.map((point, i) => (
-                <li key={i} className="text-sm flex gap-2">
-                  <span className="text-muted-foreground shrink-0">
-                    &bull;
+    <div className="space-y-6">
+      {/* Score */}
+      <div className="p-4 rounded-lg bg-muted/50">
+        <p className="text-sm text-muted-foreground">
+          <span className="font-semibold text-foreground">
+            Score : {summary.score}/5
+          </span>{" "}
+          &mdash; {summary.scoreJustification}
+        </p>
+      </div>
+
+      {/* Résumé */}
+      <div>
+        <h4 className="text-sm font-semibold text-muted-foreground mb-2">
+          R&eacute;sum&eacute;
+        </h4>
+        <p className="text-base leading-relaxed">{summary.summary}</p>
+      </div>
+
+      {/* Points clés par catégorie */}
+      <div>
+        <h4 className="text-sm font-semibold text-muted-foreground mb-3">
+          Points cl&eacute;s
+        </h4>
+        <div className="space-y-1">
+          {summary.bulletPoints.map((group, i) => {
+            const isOpen = openCategories.has(i);
+            return (
+              <Collapsible
+                key={i}
+                open={isOpen}
+                onOpenChange={() => toggleCategory(i)}
+              >
+                <CollapsibleTrigger className="w-full text-left flex items-center gap-2 px-3 py-2.5 rounded-lg hover:bg-muted/50 transition-colors">
+                  <ChevronDown
+                    className={cn(
+                      "w-4 h-4 text-muted-foreground/60 transition-transform duration-200 shrink-0",
+                      isOpen && "rotate-180"
+                    )}
+                  />
+                  <span className="text-sm font-medium flex-1">
+                    {group.category}
                   </span>
-                  <span>{point}</span>
-                </li>
-              ))}
-            </ul>
-            {sourceSections && sourceSections.length > 0 && (
-              <Collapsible open={sourceOpen} onOpenChange={setSourceOpen}>
-                <CollapsibleTrigger className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-                  {sourceOpen ? "\u25B2 Masquer" : "\u25BC Voir"} les sections
-                  sources du DEU ({sourceSections.length})
+                  <span className="text-xs text-muted-foreground tabular-nums">
+                    {group.points.length}
+                  </span>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <div className="mt-3 space-y-3 border-t pt-3">
-                    {sourceSections.map((section) => (
-                      <div key={section.id}>
-                        <h5 className="text-xs font-semibold text-muted-foreground">
-                          {section.heading}
-                        </h5>
-                        <p className="text-xs text-muted-foreground whitespace-pre-wrap mt-1 max-h-40 overflow-auto">
-                          {section.content}
-                        </p>
-                      </div>
+                  <ul className="space-y-2 pl-9 pr-3 pb-2">
+                    {group.points.map((point, j) => (
+                      <li key={j} className="text-sm flex gap-2.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                        <span className="leading-relaxed">{point}</span>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </CollapsibleContent>
               </Collapsible>
-            )}
-          </CardContent>
-        </CollapsibleContent>
-      </Card>
-    </Collapsible>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Sources (collapsible) */}
+      {hasSourceSections && (
+        <Collapsible open={sourceOpen} onOpenChange={setSourceOpen}>
+          <CollapsibleTrigger className="text-sm text-primary hover:text-primary/80 font-medium transition-colors flex items-center gap-1.5">
+            <ChevronDown
+              className={cn(
+                "w-4 h-4 transition-transform duration-200",
+                sourceOpen && "rotate-180"
+              )}
+            />
+            {sourceOpen ? "Masquer" : "Voir"} les sections sources (
+            {sourceSections.length})
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="mt-3 space-y-3 border-t pt-3">
+              {sourceSections.map((section) => (
+                <div key={section.id}>
+                  <h5 className="text-sm font-semibold text-foreground">
+                    {section.heading}
+                  </h5>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap mt-1 max-h-40 overflow-auto leading-relaxed">
+                    {section.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      )}
+    </div>
   );
 }

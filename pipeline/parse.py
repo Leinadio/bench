@@ -20,12 +20,8 @@ def _table_to_text(table: Tag) -> str:
     return "\n".join(rows)
 
 
-def _extract_content_between(start_heading, next_heading, soup) -> str:
-    """Extract all text content between two headings.
-
-    Uses get_text() on block-level elements (p, li, table) which correctly
-    handles all inline tags (span, a, ix:nonFraction, etc.).
-    """
+def _extract_content_between(start_heading, next_heading, heading_ids: set) -> str:
+    """Extract all text content between two headings."""
     parts = []
     seen_ids = set()
 
@@ -34,32 +30,30 @@ def _extract_content_between(start_heading, next_heading, soup) -> str:
         current = current.next_element
         if current is None:
             break
-        # Stop at the next heading
         if current == next_heading:
             break
-        if isinstance(current, Tag) and current.name in HEADING_TAGS and current != start_heading:
-            break
+        if isinstance(current, Tag) and current != start_heading:
+            if current.name in HEADING_TAGS:
+                break
+            if id(current) in heading_ids:
+                break
 
         if not isinstance(current, Tag):
             continue
 
-        # Skip already-processed elements (children of a block we already handled)
         el_id = id(current)
         if el_id in seen_ids:
             continue
 
         if current.name == "table":
             parts.append(_table_to_text(current))
-            # Mark all descendants as seen
             for desc in current.descendants:
                 seen_ids.add(id(desc))
 
         elif current.name in BLOCK_TAGS:
-            # Use get_text() which correctly handles span, a, ix:*, etc.
             text = current.get_text(separator=" ", strip=True)
             if text:
                 parts.append(text)
-            # Mark all descendants as seen
             for desc in current.descendants:
                 seen_ids.add(id(desc))
 
@@ -67,27 +61,35 @@ def _extract_content_between(start_heading, next_heading, soup) -> str:
 
 
 def parse_xhtml_sections(xhtml_content: str) -> list[dict]:
-    """Parse XHTML content into a list of sections.
+    """Parse XHTML content into sections.
 
-    Finds ALL heading tags (h1-h6) anywhere in the document, not just direct
-    children of <body>. This handles real ESEF XHTML where headings are nested
-    inside multiple layers of <div> elements.
-
-    Uses get_text() on block elements (p, li, table) to correctly extract text
-    from inline tags (span, a, ix:nonFraction, ix:nonNumeric, etc.).
-
-    Each section has: heading, depth, content, order_index.
+    First tries semantic h1-h6 tags. Falls back to <p class="titre"> for
+    documents like LVMH that use CSS classes instead of heading tags.
     """
     soup = BeautifulSoup(xhtml_content, "lxml")
     body = soup.find("body")
     if not body:
         return []
 
-    # Find ALL headings in document order
     all_headings = body.find_all(HEADING_TAGS)
+    css_depth_map: dict[int, int] = {}
+
+    # Fallback: CSS class-based headings (e.g. LVMH uses <p class="titre">)
+    if not all_headings:
+        all_headings = body.find_all("p", class_=lambda c: c and "titre" in c)
+        for tag in all_headings:
+            classes = tag.get("class", [])
+            if "sommaire" in classes or "button" in classes:
+                css_depth_map[id(tag)] = 1
+            elif classes == ["titre"]:
+                css_depth_map[id(tag)] = 2
+            else:
+                css_depth_map[id(tag)] = 3
 
     if not all_headings:
         return []
+
+    heading_ids = {id(h) for h in all_headings}
 
     sections = []
     for i, heading_tag in enumerate(all_headings):
@@ -95,14 +97,11 @@ def parse_xhtml_sections(xhtml_content: str) -> list[dict]:
         if not heading_text:
             continue
 
-        depth = HEADING_DEPTH.get(heading_tag.name, 1)
-
-        # Next heading (or None if last)
+        depth = css_depth_map.get(id(heading_tag)) or HEADING_DEPTH.get(heading_tag.name, 1)
         next_heading = all_headings[i + 1] if i + 1 < len(all_headings) else None
 
-        content = _extract_content_between(heading_tag, next_heading, soup)
+        content = _extract_content_between(heading_tag, next_heading, heading_ids)
 
-        # Skip empty sections and very short ones (likely decorative)
         if len(content) < 10 and depth > 3:
             continue
 

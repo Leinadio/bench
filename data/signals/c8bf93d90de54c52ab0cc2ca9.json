@@ -1,0 +1,70 @@
+{
+  "signals": [
+    {
+      "type": "positive",
+      "title": "TotalEnergies prolonge ses mesures de plafonnement des carburants jusqu'au 7 avril",
+      "summary": "TotalEnergies maintient ses mesures de contrôle des prix dans ses stations-service françaises, démontrant un engagement envers la responsabilité sociale.",
+      "theme": "esg",
+      "sourceUrl": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxQN0IxRE9WXzV2NzN3ZkhVUFRDNGVkWnJyT0M1bWZkNkJFQmxPYjEzSEpoZ0JaR3hjMUFqS3hid0JMNmp1eVlrbEYwOUtwSVlVOF9aWnBXRVA4bktNU1lGVDQ3Zy13aHA2emgxM0tMWjlmcVNWVmZPTTl6SWFsMWNaUlRaUHFfSmVYRXRNcUJyMnZkVTdFQjdPVzVDeE9BcklQcG5qNUdwd1hDYWRON3ZXXzE5TWhaVTlna2J5UkYxUlhkTWs?oc=5",
+      "date": "01/04/2024",
+      "relatedRisks": [
+        "regulatory",
+        "reputation"
+      ]
+    },
+    {
+      "type": "negative",
+      "title": "Action TotalEnergies recule de 2,67% suivant la tendance du pétrole",
+      "summary": "Le cours de l'action TotalEnergies baisse significativement suite à la chute des prix du pétrole sur les marchés.",
+      "theme": "financial",
+      "sourceUrl": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOdUk0U3hINlZ2UTFsVXVPbG1XQVpPMUdvcFNiSXlVQ0I2aGpGLUxOZ2YtdnlnX3RXN1FzY0xtenBIbkc2WGg3bEFwODZlWFNmTHZXREIwc3VCZGxnNGR2NHdUNUVkMTdJbF9FVUExdU1FbW9mTkpxblI5SEFIS2NPckU0eVg0YVZVZlFlWlVscmlGRnUyQTRqZmF2YlRUaGg4aHpZbjJoUlRaZmZqeU12bTFEX045SlpOZHBHQw?oc=5",
+      "date": "01/04/2024",
+      "relatedRisks": [
+        "market",
+        "commodity price"
+      ]
+    },
+    {
+      "type": "negative",
+      "title": "TotalEnergies a réalisé un milliard de dollars de profits spéculatifs en pleine crise énergétique",
+      "summary": "TotalEnergies aurait empoché un milliard de dollars grâce à une opération spéculative lors de la crise énergétique liée à la guerre en Iran, soulevant des questions éthiques.",
+      "theme": "governance",
+      "sourceUrl": "https://news.google.com/rss/articles/CBMi-gFBVV95cUxQcV9SaDdTeV9reU9mYzVvYmc5VlgtV3VuS3d5MFVkeFQ0aTVxdlItNFQ4M0JxbzZueDFHeHRtaVBLRFIzZm9PVEtEMlZoYnMxX3VIdmpiMXBEaU5zTGVGc0RweFJVMFJjZEEzNXJKUUhoZ0lpbEdFUzhhUF9ORXl3TkhqbEthb1dXd1Fsc2trZzhVNVEtUENNenZQdUl2ZlFESWhkM0RvYnl4ZDFndHdybFZZdTRIWGowTURQTkRGR2pXb1lLbzh4eEZYV2hDblZpQ3ZNcGJ0enNZa3FTVk9jWEJWN3hKMVR5UG9uME5VTDE5VGd2R2xoNVJ3?oc=5",
+      "date": "31/03/2024",
+      "relatedRisks": [
+        "reputation",
+        "regulatory",
+        "ethical"
+      ]
+    },
+    {
+      "type": "negative",
+      "title": "Appels à la nationalisation de TotalEnergies",
+      "summary": "Des critiques appellent à la nationalisation de TotalEnergies en raison de ses pratiques commerciales controversées et de son impact social.",
+      "theme": "governance",
+      "sourceUrl": "https://news.google.com/rss/articles/CBMifEFVX3lxTE53Rzc1ZnNnV0RVVm8yOXJmcGlkcklLci0zdWZkcTdNQmlQV0RuNkdOMDhuTEgwamdQLXByUFJpdWpuSmdQYVp0VkFod213QTZRS2lMc01INXNCQjZHZUgtT2Z4dFVzbzJ5Ny1hTjVwdmVpTEpCZzJJekJCbEg?oc=5",
+      "date": "31/03/2024",
+      "relatedRisks": [
+        "political",
+        "reputation",
+        "regulatory"
+      ]
+    },
+    {
+      "type": "negative",
+      "title": "Ancien conseiller de l'Élysée rejoint TotalEnergies",
+      "summary": "Le conseiller agriculture du Président quitte son poste pour rejoindre TotalEnergies, soulevant des préoccupations concernant les conflits d'intérêts et les relations gouvernementales.",
+      "theme": "governance",
+      "sourceUrl": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNWWpfMzIzMkNLNkd6M0xvT1B6ejRTcnVJQVJDSV9ocExGUWFvSllDT0dvZ2RDYmN6QWI4UHhMeHBPVVFpaWZCMWZYVHdpYmtIU05QOVlwVV9qMExtWkNBZXg3YVRrSklqczRXaGo3R3Roa3pJY3FjVmUwMy1sQ1I5MjBwMUpqTFZxcjMyTjlLcjY5M21tYlc1MnE5cw?oc=5",
+      "date": "31/03/2024",
+      "relatedRisks": [
+        "governance",
+        "reputation",
+        "conflict of interest"
+      ]
+    }
+  ],
+  "companyName": "TotalEnergies",
+  "analyzedAt": "2026-04-01T22:18:19.414Z",
+  "articleCount": 8
+}

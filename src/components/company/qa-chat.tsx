@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Send, MessageCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Message {
   role: "user" | "assistant";
@@ -37,31 +38,66 @@ export function QAChat({ filingId }: { filingId: string }) {
   };
 
   return (
-    <div className="flex flex-col gap-3">
-      <h3 className="font-semibold">Poser une question sur ce DEU</h3>
-      <div className="flex flex-col gap-2 max-h-96 overflow-auto">
-        {messages.map((msg, i) => (
-          <Card key={i} className={msg.role === "user" ? "bg-muted" : ""}>
-            <CardContent className="pt-3 pb-3">
-              <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-              {msg.sources && msg.sources.length > 0 && (
-                <p className="text-xs text-muted-foreground mt-2">
-                  Sources : {msg.sources.join(", ")}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-        {loading && (
-          <p className="text-sm text-muted-foreground">Analyse en cours...</p>
-        )}
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-2.5">
+        <MessageCircle className="w-5 h-5 text-primary" />
+        <h3 className="text-xl">Poser une question sur ce DEU</h3>
       </div>
-      <form onSubmit={handleSubmit} className="flex gap-2">
+
+      {messages.length > 0 && (
+        <div className="flex flex-col gap-3 max-h-96 overflow-auto">
+          {messages.map((msg, i) => (
+            <div
+              key={i}
+              className={cn(
+                "animate-fade-in-up",
+                msg.role === "user" ? "flex justify-end" : "flex justify-start"
+              )}
+              style={{ animationDelay: `${i * 0.05}s` }}
+            >
+              <div
+                className={cn(
+                  "max-w-[85%] rounded-xl px-4 py-3",
+                  msg.role === "user"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-card border border-border"
+                )}
+              >
+                <p className="text-base whitespace-pre-wrap leading-relaxed">
+                  {msg.content}
+                </p>
+                {msg.sources && msg.sources.length > 0 && (
+                  <p className="text-sm mt-2 opacity-70">
+                    Sources : {msg.sources.join(", ")}
+                  </p>
+                )}
+              </div>
+            </div>
+          ))}
+          {loading && (
+            <div className="flex justify-start">
+              <div className="bg-card border border-border rounded-xl px-4 py-3 flex gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-primary/50 loading-dot" />
+                <span
+                  className="w-2 h-2 rounded-full bg-primary/50 loading-dot"
+                  style={{ animationDelay: "0.2s" }}
+                />
+                <span
+                  className="w-2 h-2 rounded-full bg-primary/50 loading-dot"
+                  style={{ animationDelay: "0.4s" }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="flex gap-2 items-end">
         <Textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ex: Quels sont les principaux risques lies au climat ?"
-          className="flex-1 min-h-[60px]"
+          placeholder="Ex: Quels sont les principaux risques li&eacute;s au climat ?"
+          className="flex-1 min-h-[56px] resize-none text-base"
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
@@ -69,8 +105,8 @@ export function QAChat({ filingId }: { filingId: string }) {
             }
           }}
         />
-        <Button type="submit" disabled={loading}>
-          Envoyer
+        <Button type="submit" disabled={loading} size="lg">
+          <Send className="w-4 h-4" />
         </Button>
       </form>
     </div>

@@ -1,0 +1,69 @@
+{
+  "signals": [
+    {
+      "type": "negative",
+      "title": "LVMH enregistre le pire début d'année de son histoire avec une baisse de 28%",
+      "summary": "LVMH accuse une chute de 28% sur les trois premiers mois de 2026, marquant le pire début d'année boursier de son histoire et assombrissant les perspectives du secteur du luxe.",
+      "theme": "financial",
+      "sourceUrl": "https://news.google.com/rss/articles/CBMirgJBVV95cUxPc3I3V0JQUmZOazJ6TjRIbGlxRnB4cXB0SXJjMHpLSmQ5NFl4MGhka1lkbU5NMHpIVTZJcThuZ1JHWlYxbmxIajF1N3BHNUFBTHZZald6VHB2dkpKVWluSDlGQmhVTUJ0ZVFuQVBtNjBNT1FTR01nMVJsV2dkbHU3LXZHalNiZGJPNlVDNzdjcV90LTRPMmtQNlVkWV80cFhyYUE0M19PTHJEcnphTmFJTTZuX3ZEUHR5MTNNRkZDUXBRR0FHbUUwc0NBWEZ4NjlwZVIxNXJnVzNEX0N2Mmo1c3pDcmU5ZzhUaWYzWVlvV2xVY2RZeU1CTVNVTkhFX2VmdUQzZGVLNnM2NGdrOG8yZWdZSEVsaGh3YUpHS053RFA2TmJ5NnhHa01vYUwwUQ?oc=5",
+      "date": "01/04/2026",
+      "relatedRisks": [
+        "market downturn",
+        "luxury sector weakness",
+        "consumer demand decline"
+      ]
+    },
+    {
+      "type": "negative",
+      "title": "LVMH subit les contrecoups de la guerre au Moyen-Orient",
+      "summary": "Les tensions géopolitiques au Moyen-Orient impactent négativement les performances et perspectives de LVMH.",
+      "theme": "risk",
+      "sourceUrl": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQWUxkSnZBSGJhUXlNMWVzQTBfVW43b1lERERsMEZnWExSa2ZzM2JhbGpfTlhia2dWZ1Q4Ylc4TVZTRl9wTi1wZ0RKUVVYV28xaE5ja0hiZHNzMEhnMFhiVmZxbWZjUGktWFY0ejdIV3ZsbVhMNXY4QWdWZllOS0ItZzltbXJpdk1jSmhfME1ZUmF2MUtFN2VGR0dLcUluc1dXS0RzanJn?oc=5",
+      "date": "01/04/2026",
+      "relatedRisks": [
+        "geopolitical risk",
+        "regional instability",
+        "demand disruption"
+      ]
+    },
+    {
+      "type": "positive",
+      "title": "LOEWE inaugure une nouvelle boutique CASA LOEWE à Paris",
+      "summary": "LOEWE, marque phare de LVMH, inaugure une nouvelle boutique concept à Paris renforçant sa présence retail de luxe.",
+      "theme": "strategy",
+      "sourceUrl": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPa2UyVnJzYUl2M2VpYkZQdDRyNkYtbVo5Nm5mVzdtcENmRXZWbDc4SFFsNVg1TExOMkTyV2dmVmRqTVE4N3NuOEhzM3U3TXF6V2hnSVFUcXhNN0JNM0FNX19fR3R4c1hiRUtlbWtYQ0I3RnhFdmluellrRFUyVjZ0bG1kVGphTkh5NkVBUERwZmNCTHhCdlZSS2pXSE1wc1lUQ1RP?oc=5",
+      "date": "01/04/2026",
+      "relatedRisks": [
+        "retail expansion",
+        "brand development"
+      ]
+    },
+    {
+      "type": "neutral",
+      "title": "Une conjoncture difficile qui redonne un profil de risque attractif à LVMH",
+      "summary": "Malgré un contexte économique difficile, les analystes considèrent que la valorisation actuelle de LVMH présente un profil de risque/rendement attractif.",
+      "theme": "financial",
+      "sourceUrl": "https://news.google.com/rss/articles/CBMixwFBVV95cUxOUnh0TjVVaHF4cVpXczJEQ3hudDhtU0ZRQjZxTW81dW5zTHZ5SlJxZmpWQzk0ZWxkRy1Cbm9QN2tPU2laS1Q0ZDZYNDhaeFU5OUhYRUl1VmdFQm1WeTViSjBaeHJ6QUd3TGNsLXVIQjZ6RlpVSkR1cDRVd0FTeUVJZnptVVBKQ1d4RElkYTNlUXEtZ3FKYlk2YU42VlN0NENLZ0dQWUxNSnozSWlJWmprM19lclRqQ1hqbWVNNGVmME00X2I1dVcw?oc=5",
+      "date": "01/04/2026",
+      "relatedRisks": [
+        "valuation opportunity",
+        "recovery potential"
+      ]
+    },
+    {
+      "type": "neutral",
+      "title": "Assemblée générale mixte LVMH prévue le 23 avril 2026",
+      "summary": "LVMH annonce la tenue de son assemblée générale mixte le 23 avril 2026 avec mise à disposition des documents préparatoires.",
+      "theme": "governance",
+      "sourceUrl": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPWmRlUmJMWXc1cDBZcG40YzV5WDJ2RkRvbzRlV2lSNVJaTHFDZnlxSURjOUtxcjRTempsdGFiTjlocjR4Y1FPZ2JkVmRuVDNfbzJMZWY0WFcxNXVFOFVZZE90cEo5NjkzQlpKRVpFZzhVYlBQbnpnVG43bW9qdExVRWNVMVZvc2Q4cnpkUHFpenVuNlVmekZoRGJFVllpR0YwUzQwbF9KOWw?oc=5",
+      "date": "23/04/2026",
+      "relatedRisks": [
+        "corporate governance",
+        "shareholder approval"
+      ]
+    }
+  ],
+  "companyName": "LVMH",
+  "analyzedAt": "2026-04-01T21:54:01.467Z",
+  "articleCount": 8
+}

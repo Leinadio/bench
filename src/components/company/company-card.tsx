@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScoreBar } from "./score-bar";
 import type { CompanyWithSummaries } from "@/lib/types";
@@ -14,31 +21,35 @@ export function CompanyCard({
   themeSummaries,
 }: CompanyWithSummaries) {
   return (
-    <Link href={`/company/${id}`}>
-      <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
-        <CardHeader className="pb-2">
+    <Link href={`/company/${id}`} className="group block">
+      <Card className="h-full transition-all duration-200 hover:shadow-md hover:border-primary/30">
+        <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">{name}</CardTitle>
-            <Badge variant="secondary">{ticker}</Badge>
+            <CardTitle>{name}</CardTitle>
+            <Badge variant="outline" className="font-mono text-xs">
+              {ticker}
+            </Badge>
           </div>
-          <p className="text-sm text-muted-foreground">{sector}</p>
+          <CardDescription>{sector}</CardDescription>
         </CardHeader>
         <CardContent>
           {themeSummaries.length > 0 ? (
-            <>
-              <ScoreBar summaries={themeSummaries} size="sm" />
-              {globalSummary && (
-                <p className="text-xs text-muted-foreground mt-3 line-clamp-2">
-                  {globalSummary.summary}
-                </p>
-              )}
-            </>
+            <ScoreBar summaries={themeSummaries} size="sm" />
           ) : (
-            <p className="text-xs text-muted-foreground">
-              {filings.length > 0 ? "Fiches en cours..." : "Aucun DEU index\u00e9"}
+            <p className="text-sm text-muted-foreground">
+              {filings.length > 0
+                ? "Fiches en cours..."
+                : "Aucun DEU index\u00e9"}
             </p>
           )}
         </CardContent>
+        {globalSummary && (
+          <CardFooter>
+            <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+              {globalSummary.summary}
+            </p>
+          </CardFooter>
+        )}
       </Card>
     </Link>
   );

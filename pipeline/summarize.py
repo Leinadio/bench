@@ -12,14 +12,11 @@ def _clean_json(raw: str) -> str:
         return match.group(1).strip()
     return cleaned
 
-VALID_THEMES = {"risk", "strategy", "governance", "esg", "financial"}
+VALID_THEMES = {"risk", "strategy"}
 
 THEME_LABELS = {
     "risk": "Facteurs de risque",
     "strategy": "Stratégie et objectifs",
-    "governance": "Gouvernance",
-    "esg": "ESG et développement durable",
-    "financial": "Données financières",
 }
 
 THEME_PROMPT = """Tu es un analyste financier expert. Tu simplifies un Document d'Enregistrement Universel (DEU) pour un investisseur qui n'a pas le temps de lire 700 pages.
@@ -34,12 +31,19 @@ Génère un JSON avec cette structure exacte :
   "score": <int 1-5, où 1=critique/très faible et 5=excellent/très solide>,
   "scoreJustification": "<1-2 phrases expliquant le score>",
   "summary": "<résumé du thème en 3 phrases max, clair et accessible>",
-  "bulletPoints": ["<point clé 1>", "<point clé 2>", ..., "<point clé N>"]
+  "bulletPoints": [
+    {{
+      "category": "<nom de la catégorie, issu des headings des sections du DEU>",
+      "points": ["<point clé 1>", "<point clé 2>"]
+    }}
+  ]
 }}
 
 Règles :
-- 5 à 10 bullet points maximum
-- Chaque bullet point fait 1 phrase, claire et concrète
+- Regroupe les points clés par catégorie en t'appuyant sur les titres des sections du DEU
+- 3 à 6 catégories, chacune avec 1 à 4 points clés
+- Chaque point fait 1 phrase, claire et concrète
+- Les noms de catégories doivent être courts et lisibles (sans numéro de section)
 - Le résumé doit être compréhensible par quelqu'un qui ne connaît pas l'entreprise
 - Le score doit être honnête : 2/5 est un résultat valide
 - Écris en français
@@ -55,11 +59,16 @@ Génère un JSON résumant l'ensemble :
   "score": <int 1-5, score global de l'entreprise>,
   "scoreJustification": "<1-2 phrases justifiant le score global>",
   "summary": "<résumé global en 3 phrases : forces, faiblesses, perspective>",
-  "bulletPoints": ["<les 3 points les plus importants à retenir>"]
+  "bulletPoints": [
+    {{
+      "category": "Points essentiels",
+      "points": ["<point 1>", "<point 2>", "<point 3>"]
+    }}
+  ]
 }}
 
 Règles :
-- Exactement 3 bullet points (les plus importants)
+- Exactement 3 points dans une seule catégorie "Points essentiels"
 - Le résumé doit permettre de comprendre l'entreprise en 10 secondes
 - Écris en français
 
@@ -99,7 +108,7 @@ def generate_global_summary(theme_summaries: list[dict], company_name: str) -> d
     themes_text = "\n\n".join(
         f"**{THEME_LABELS.get(s['theme'], s['theme'])}** (score: {s['score']}/5)\n"
         f"Résumé : {s['summary']}\n"
-        f"Points clés : {', '.join(s['bulletPoints'][:5])}"
+        f"Points clés : {', '.join(p for g in s['bulletPoints'][:3] for p in g['points'][:2])}"
         for s in theme_summaries
     )
     prompt = GLOBAL_PROMPT.format(company_name=company_name, themes_text=themes_text)

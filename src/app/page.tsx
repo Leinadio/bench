@@ -18,19 +18,36 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-1">FilingLens</h1>
-      <p className="text-muted-foreground mb-6">
-        Les DEU du CAC 40, simplifi&eacute;s par l&apos;IA.
-      </p>
+    <div className="max-w-6xl mx-auto">
+      <div className="mb-10 animate-fade-in-up">
+        <h1 className="text-4xl mb-2">FilingLens</h1>
+        <p className="text-muted-foreground text-lg">
+          Les DEU du CAC 40, simplifi&eacute;s par l&apos;IA.
+        </p>
+      </div>
+
       {loading ? (
-        <p className="text-muted-foreground">Chargement...</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {[...Array(6)].map((_, i) => (
+            <div
+              key={i}
+              className="h-52 rounded-xl bg-card border border-border shimmer"
+              style={{ animationDelay: `${i * 0.1}s` }}
+            />
+          ))}
+        </div>
       ) : companies.length === 0 ? (
-        <p className="text-muted-foreground">Aucune entreprise index&eacute;e.</p>
+        <p className="text-muted-foreground text-base">Aucune entreprise index&eacute;e.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {companies.map((c) => (
-            <CompanyCard key={c.id} {...c} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {companies.map((c, i) => (
+            <div
+              key={c.id}
+              className="animate-fade-in-up"
+              style={{ animationDelay: `${i * 0.05}s` }}
+            >
+              <CompanyCard {...c} />
+            </div>
           ))}
         </div>
       )}

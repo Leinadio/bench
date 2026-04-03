@@ -1,17 +1,19 @@
 export type SectionCategory = "risk" | "strategy" | "governance" | "esg" | "financial" | "other";
 
-export type Theme = "risk" | "strategy" | "governance" | "esg" | "financial" | "global";
+export type Theme = "risk" | "strategy" | "global";
 
 export const THEME_LABELS: Record<Theme, string> = {
   risk: "Risques",
   strategy: "Stratégie",
-  governance: "Gouvernance",
-  esg: "ESG",
-  financial: "Finance",
   global: "Global",
 };
 
-export const THEME_ORDER: Theme[] = ["risk", "strategy", "governance", "esg", "financial"];
+export const THEME_ORDER: Theme[] = ["risk", "strategy"];
+
+export interface BulletCategory {
+  category: string;
+  points: string[];
+}
 
 export interface CompanySummary {
   id: string;
@@ -19,7 +21,7 @@ export interface CompanySummary {
   score: number;
   scoreJustification: string;
   summary: string;
-  bulletPoints: string[];
+  bulletPoints: BulletCategory[];
 }
 
 export interface CompanyWithSummaries {
@@ -49,4 +51,21 @@ export interface CompanyDetail {
     summaries: CompanySummary[];
     sectionsByTheme: Record<string, { id: string; heading: string; content: string }[]>;
   }[];
+}
+
+export interface Signal {
+  type: "positive" | "negative" | "neutral";
+  title: string;
+  summary: string;
+  theme: Theme | null;
+  sourceUrl: string;
+  date: string;
+  relatedRisks: string[];
+}
+
+export interface SignalsResponse {
+  signals: Signal[];
+  companyName: string;
+  analyzedAt: string;
+  articleCount: number;
 }

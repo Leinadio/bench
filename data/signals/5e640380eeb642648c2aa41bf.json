@@ -1,0 +1,44 @@
+{
+  "signals": [
+    {
+      "type": "neutral",
+      "title": "Mise en ligne du document Pre-Q1 2026 Sales Communication",
+      "summary": "Air Liquide publie son document de communication des ventes pour le pré-Q1 2026.",
+      "theme": "financial",
+      "sourceUrl": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxPaVFHSWI2ZjBubmpUWHp4bGpFVFMtLVNjYTRZUEpTa3BtYVdLd3B0R2hRc3Vqem9mcUJRa2xoU2FMemJ6empQdFQxc3hxdmo5ckxwRE5KMFJWOS1TZ2pkSHVjcXU5cWhFdnRPazFBVG5aVFZmWlEtS29oMVVNeHVxcHZhZWxGT1ZJUHVYV1NkWXdJcnVBeXlubnlBckZ0Y2VyWTdwSXF5emdvOXF2dEEwNnIta1hXTkdOZV83QUpiVHFyOTNfNEhHdEw2by1RMGl5?oc=5",
+      "date": "01/04/2025",
+      "relatedRisks": [
+        "market communication",
+        "financial reporting"
+      ]
+    },
+    {
+      "type": "positive",
+      "title": "L'action du petit Air Liquide italien fait des étincelles",
+      "summary": "Air Liquide Italy démontre une performance boursière positive avec des étincelles impressionnantes.",
+      "theme": "financial",
+      "sourceUrl": "https://news.google.com/rss/articles/CBMingJBVV95cUxNR2U1ZG9YWkszZW0wQzdaT2p5bXBjR2pyTkk0aVB5SmpqaGhmQlZ6dDhMbl9oRzRMQU02RkFhTldkRG5hcWQwMDBIU2w5MGtoV1c4dThxbkVfVUsxdldFNkhTbnBIUHNNdlQ4QTU5QTFwcTg5ZU91NW9zQnRqX0NYOUxRSC1XdDFBQXhwWkt1QVVqWWtfUjZVM0pyNDI5WHVKeXVNdmJQaTJsTF9CMHBzQ0pST2RUenVVUXhvQ3Y3LWlmeXZoRjJ2UUZVTmVaSXJpOUNPcTZvTUtTZk5nd2V1d09iSnlMOE13Sno1cUF4ZU5lQU5GT2h2aUR4MDVuMHRsbmtkQkd1Q1pHWm01N1V1R25YNklrNlg1Mzh5X2JR?oc=5",
+      "date": "01/04/2025",
+      "relatedRisks": [
+        "stock performance",
+        "market visibility"
+      ]
+    },
+    {
+      "type": "neutral",
+      "title": "Mistral AI emprunte 830 millions de dollars pour financer ses propres data centers",
+      "summary": "Mistral AI lève 830 millions de dollars pour développer ses propres infrastructures de data centers, reflétant les enjeux de compétitivité en IA.",
+      "theme": "strategy",
+      "sourceUrl": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPTzc1VUhZNWtHRWFQRV9NeVRvS2Y0MnZMX2wzUERuVDhsRzBMYnRnWkFNcU5DUUJuQmwtQ2RFZXl6QmdpT1k3Y0VqQnJybTlFSWJPaFZEdEJRMGo3dWxzbUI2RzdtVk5xaElNVFN4V3czSkVnMEwtU1lZMVlJd05LWUxraE5paHl1UG9DbkZGclVsQjNlSXFKaTAyXzg4VjNsb21xSnA4U1gyNC1uSnZud2dxRVE1ZzFTaUVsVWJBMXZrc1lOanJHNS1Fb2dLZUlQWU5rVlNPZDZSV0M0NkViUlpB?oc=5",
+      "date": "01/04/2025",
+      "relatedRisks": [
+        "competitive pressure",
+        "capex intensity",
+        "market competition"
+      ]
+    }
+  ],
+  "companyName": "Air Liquide",
+  "analyzedAt": "2026-04-01T21:53:13.743Z",
+  "articleCount": 8
+}

@@ -5,7 +5,8 @@ import requests
 
 
 def download_and_extract(url: str, output_dir: str) -> str | None:
-    response = requests.get(url, timeout=120)
+    headers = {"User-Agent": "Mozilla/5.0 FilingLens/1.0"}
+    response = requests.get(url, timeout=120, headers=headers)
     response.raise_for_status()
     zip_buffer = io.BytesIO(response.content)
     with zipfile.ZipFile(zip_buffer, "r") as zf:

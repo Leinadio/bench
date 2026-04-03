@@ -1,0 +1,66 @@
+{
+  "signals": [
+    {
+      "type": "negative",
+      "title": "Hermès International perd 0,80%",
+      "summary": "Le titre Hermès International affiche une baisse de 0,80% en séance boursière.",
+      "theme": "financial",
+      "sourceUrl": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNQkRRSDZ5WGNTZnBYYUxIbEUzSC1SUmlRX2V1c09kcnQzYzdlNGNjMVI1TTZYLUkyUWNYWVhBblFFTXNpS0piVEg0WS16S0dleFlQSDNZaFcwV0M2Ymk5aWcybXVxSmVHNmJQbUFTNVJETmMzYVlXMmc0bjlUU2o3ZTRGZkJsUWNNeWJENDM3Ml81a0Jkc0NGVA",
+      "date": "N/A",
+      "relatedRisks": [
+        "market volatility",
+        "stock performance"
+      ]
+    },
+    {
+      "type": "neutral",
+      "title": "Hermès International termine à l'équilibre",
+      "summary": "Le cours de Hermès International se stabilise à l'équilibre après les fluctuations de la séance.",
+      "theme": "financial",
+      "sourceUrl": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPU2pKbVJuSzdfeEdZT0FZNkwwa0FjdFhEQzdLcVp4UlhvUWlpVjk0cmlzdW9MUGlzYnpteml4U3JFcm9IQUtObDkyZE51bVJhWGc2ZjhCdkg1MDZrbzJBeGRKQkFvMFZMNjBMVzlQaWtzYlhrYUtjUXVFYzBZZUtJSGQtaEZLcno1bmE1SkFzRFZSOEN2U2Zqdw",
+      "date": "N/A",
+      "relatedRisks": [
+        "price stability"
+      ]
+    },
+    {
+      "type": "neutral",
+      "title": "Hermès International: Une zone support en renfort",
+      "summary": "L'analyse technique identifie une zone de support clé pour le titre Hermès International.",
+      "theme": null,
+      "sourceUrl": "https://news.google.com/rss/articles/CBMikAFBVV95cUxORXJDeThaMUd4Nm9sb0FDcXJfN09JOURUNko3Y0taTV9JaTZaQzBvelY1NHRNNU1rQzBhRUVPZnJ5ZTJ4Qmo4dTV6SmZaczl0UkhBbjMxRGd6RVF0UHphV0J6SGs5WlE4dUxJYlUtQXY1SGRTeUtZWjZLekRyUVhkTXFPQVQ5LXYzbFhlTEZkc3A",
+      "date": "N/A",
+      "relatedRisks": [
+        "technical support levels",
+        "market correction"
+      ]
+    },
+    {
+      "type": "neutral",
+      "title": "Hermès International: rémunération des gérants 2025-2026",
+      "summary": "Communication officielle sur la politique de rémunération des dirigeants pour les exercices 2025-2026.",
+      "theme": "governance",
+      "sourceUrl": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxNc003el9QWkEwNmduVjM3QTFyZDd4elpPZExXdFo0WjQyUHotUkNmUGtDcU5Ja1BlX2FDbVRvbS1lYlN0ZDRWUWs1LXBjTFhqYkFVd1J5azR3MFJERUdmLURjeUgxbk9ERFhZdnFXWFhIS2l6RndUSk00dTBRUTlrS0tMZnRGNU8xTUJaeHA0Mm1TbUY1TEFOVzVPdlZiWXRrVlUzSXJLQnk",
+      "date": "N/A",
+      "relatedRisks": [
+        "executive compensation",
+        "governance practices"
+      ]
+    },
+    {
+      "type": "positive",
+      "title": "RMS s'associe à RoomPriceGenie pour intégrer Revenue Intelligence au PMS",
+      "summary": "Hermès signe un partenariat stratégique avec RoomPriceGenie pour intégrer une solution de Revenue Intelligence à sa plateforme de gestion.",
+      "theme": "strategy",
+      "sourceUrl": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPWnM4MXJma1FGcXNmTEFVMU5qWWJieE53TVIwQzhiZUdBZU1VVTd0aU1ONjhzWjRMSXhHN1lHMWw0WlFsQnFUWlhTcjVvSktnMk41d19uNVNqMk5qYmJhVHZic0JvTi0zTlE2WWh1WkJvTUFvRk1vM0NRVGMtZDhqZnJMdjhXWVI1a0hPeGFGeGZMVTBicU5JejRaS0lTU3Nfb0hSeS03RHdJZw",
+      "date": "N/A",
+      "relatedRisks": [
+        "partnership execution",
+        "technology integration"
+      ]
+    }
+  ],
+  "companyName": "Hermès International",
+  "analyzedAt": "2026-04-01T21:53:33.666Z",
+  "articleCount": 8
+}

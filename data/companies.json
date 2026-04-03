@@ -17,9 +17,53 @@
     "name": "LVMH",
     "ticker": "MC",
     "index": "CAC40",
-    "sector": "Luxury",
+    "sector": "Luxe",
     "country": "FR",
-    "filings": []
+    "filings": [
+      {
+        "year": 2024,
+        "zip_url": "https://filings.xbrl.org/IOG4E947OATN0KJYSD45/2024-12-31/ESEF/FR/0/IOG4E947OATN0KJYSD45-2024-12-31-0-fr.zip"
+      }
+    ]
+  },
+  {
+    "name": "Air Liquide",
+    "ticker": "AI",
+    "index": "CAC40",
+    "sector": "Chimie",
+    "country": "FR",
+    "filings": [
+      {
+        "year": 2024,
+        "zip_url": "https://www.airliquide.com/sites/airliquide.com/files/2025-03/air-liquide-document-enregistrement-universel-2024.zip"
+      }
+    ]
+  },
+  {
+    "name": "Hermès International",
+    "ticker": "RMS",
+    "index": "CAC40",
+    "sector": "Luxe",
+    "country": "FR",
+    "filings": [
+      {
+        "year": 2024,
+        "zip_url": "https://filings.xbrl.org/969500Y4IJGHJE2MTJ13/2024-12-31/ESEF/FR/0/hermes-2024-12-31-0-fr.zip"
+      }
+    ]
+  },
+  {
+    "name": "Nexity",
+    "ticker": "NXI",
+    "index": "SBF120",
+    "sector": "Immobilier",
+    "country": "FR",
+    "filings": [
+      {
+        "year": 2024,
+        "zip_url": "https://filings.xbrl.org/969500JJ71T2DIPDVV84/2024-12-31/ESEF/FR/0/nexity-2024-12-31-fr.zip"
+      }
+    ]
   },
   {
     "name": "L'Oréal",

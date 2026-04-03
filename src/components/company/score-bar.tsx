@@ -9,7 +9,7 @@ interface ScoreBarProps {
 
 export function ScoreBar({ summaries, size = "md" }: ScoreBarProps) {
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-5">
       {THEME_ORDER.map((theme) => {
         const summary = summaries.find((s) => s.theme === theme);
         if (!summary) return null;

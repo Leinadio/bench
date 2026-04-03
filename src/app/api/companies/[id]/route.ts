@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import type { CompanySummary, Theme } from "@/lib/types";
+import type { BulletCategory, CompanySummary, Theme } from "@/lib/types";
 
 export async function GET(
   _request: Request,
@@ -54,7 +54,7 @@ export async function GET(
         score: s.score,
         scoreJustification: s.scoreJustification,
         summary: s.summary,
-        bulletPoints: s.bulletPoints as string[],
+        bulletPoints: s.bulletPoints as unknown as BulletCategory[],
       }));
 
       const sectionsByTheme: Record<string, { id: string; heading: string; content: string }[]> = {};
