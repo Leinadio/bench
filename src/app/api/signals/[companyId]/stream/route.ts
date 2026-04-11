@@ -77,7 +77,7 @@ function normalizeRawSignal(raw: RawSignal): {
     summary: (raw.summary ?? "").slice(0, 1000),
     justification: (raw.justification ?? "").slice(0, 1000),
     theme,
-    sourceUrl: raw.sourceUrl ?? "",
+    sourceUrl: (raw.sourceUrl ?? "").trim(),
     date: raw.date && typeof raw.date === "string" ? raw.date : today,
     relatedRisks: Array.isArray(raw.relatedRisks)
       ? (raw.relatedRisks.filter((r) => typeof r === "string") as string[])
@@ -92,10 +92,12 @@ export async function GET(
   const { companyId } = await params;
   const encoder = new TextEncoder();
 
+  // Hoisted so the cancel() callback can abort it
+  let claudeStream: ReturnType<typeof anthropic.messages.stream> | null = null;
+  let closed = false;
+
   const stream = new ReadableStream({
     async start(controller) {
-      let closed = false;
-
       const send = (obj: unknown) => {
         if (closed) return;
         try {
@@ -168,61 +170,80 @@ export async function GET(
           return close();
         }
 
-        // 6. Stream signals from Claude
-        const scoresContext = await getScoresContext(companyId);
-        const prompt = buildSignalsPrompt(
-          {
-            name: company.name,
-            ticker: company.ticker,
-            sector: company.sector,
-          },
-          newArticles.map((a) => ({ title: a.title, url: a.url })),
-          scoresContext
-        );
+        // 6. Stream signals from Claude (sanitized errors, abort on disconnect)
+        try {
+          const scoresContext = await getScoresContext(companyId);
+          const prompt = buildSignalsPrompt(
+            {
+              name: company.name,
+              ticker: company.ticker,
+              sector: company.sector,
+            },
+            newArticles.map((a) => ({ title: a.title, url: a.url })),
+            scoresContext
+          );
 
-        const claudeStream = anthropic.messages.stream({
-          model: "claude-haiku-4-5-20251001",
-          max_tokens: 4096,
-          messages: [{ role: "user", content: prompt }],
-        });
+          claudeStream = anthropic.messages.stream({
+            model: "claude-haiku-4-5-20251001",
+            max_tokens: 4096,
+            messages: [{ role: "user", content: prompt }],
+          });
 
-        const parser = createJsonObjectStreamParser();
+          const parser = createJsonObjectStreamParser();
 
-        for await (const event of claudeStream) {
-          if (
-            event.type === "content_block_delta" &&
-            event.delta.type === "text_delta"
-          ) {
-            const completedObjects = parser.push(event.delta.text);
-            for (const raw of completedObjects) {
-              const normalized = normalizeRawSignal(raw as RawSignal);
-              try {
-                const stored = await db.signal.create({
-                  data: {
-                    companyId,
-                    type: normalized.type,
-                    title: normalized.title,
-                    summary: normalized.summary,
-                    justification: normalized.justification,
-                    theme: normalized.theme,
-                    sourceUrl: normalized.sourceUrl,
-                    date: normalized.date,
-                    relatedRisks: normalized.relatedRisks,
-                  },
-                });
-                send({ type: "signal", signal: toSignalDTO(stored) });
-              } catch (err) {
-                console.error("[signals-stream] DB insert failed:", err);
+          for await (const event of claudeStream) {
+            if (closed) break;
+            if (
+              event.type === "content_block_delta" &&
+              event.delta.type === "text_delta"
+            ) {
+              const completedObjects = parser.push(event.delta.text);
+              for (const raw of completedObjects) {
+                if (closed) break;
+                const normalized = normalizeRawSignal(raw as RawSignal);
+
+                // Skip signals without a usable source URL — they break the
+                // dedup filter on subsequent refreshes and render as broken cards.
+                if (!normalized.sourceUrl) {
+                  console.warn(
+                    "[signals-stream] Skipping signal with empty sourceUrl:",
+                    normalized.title
+                  );
+                  continue;
+                }
+
+                try {
+                  const stored = await db.signal.create({
+                    data: {
+                      companyId,
+                      type: normalized.type,
+                      title: normalized.title,
+                      summary: normalized.summary,
+                      justification: normalized.justification,
+                      theme: normalized.theme,
+                      sourceUrl: normalized.sourceUrl,
+                      date: normalized.date,
+                      relatedRisks: normalized.relatedRisks,
+                    },
+                  });
+                  send({ type: "signal", signal: toSignalDTO(stored) });
+                } catch (err) {
+                  console.error("[signals-stream] DB insert failed:", err);
+                }
               }
             }
           }
-        }
 
-        // 7. Mark refresh complete
-        await db.company.update({
-          where: { id: companyId },
-          data: { lastSignalRefresh: new Date() },
-        });
+          // 7. Mark refresh complete
+          await db.company.update({
+            where: { id: companyId },
+            data: { lastSignalRefresh: new Date() },
+          });
+        } catch (err) {
+          console.error("[signals-stream] Claude streaming error:", err);
+          send({ type: "error", message: "AI analysis failed" });
+          return close();
+        }
 
         send({ type: "done" });
         close();
@@ -233,6 +254,16 @@ export async function GET(
           message: err instanceof Error ? err.message : "Unknown error",
         });
         close();
+      }
+    },
+    cancel() {
+      closed = true;
+      if (claudeStream) {
+        try {
+          claudeStream.abort();
+        } catch (err) {
+          console.error("[signals-stream] Failed to abort Claude stream:", err);
+        }
       }
     },
   });
