@@ -22,10 +22,24 @@ export async function getScoresContext(companyId: string): Promise<string> {
       companyId,
       theme: { in: ["risk", "strategy"] },
     },
-    select: { theme: true, score: true },
+    select: {
+      theme: true,
+      score: true,
+      filing: { select: { year: true } },
+    },
+    orderBy: { filing: { year: "desc" } },
   });
 
-  return summaries.map((s) => `${s.theme} ${s.score}/5`).join(", ");
+  // Deduplicate by theme, keeping the most recent filing's score (first occurrence
+  // in the desc-ordered list).
+  const seen = new Set<string>();
+  const latestPerTheme = summaries.filter((s) => {
+    if (seen.has(s.theme)) return false;
+    seen.add(s.theme);
+    return true;
+  });
+
+  return latestPerTheme.map((s) => `${s.theme} ${s.score}/5`).join(", ");
 }
 
 /**
