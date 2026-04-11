@@ -7,7 +7,6 @@ import type { Signal } from "@/lib/types";
 
 interface SignalsPanelProps {
   companyId: string;
-  companyName: string;
 }
 
 interface StreamEvent {
@@ -15,6 +14,8 @@ interface StreamEvent {
   signals?: Signal[];
   signal?: Signal;
   message?: string;
+  lastAnalyzedAt?: string | null;
+  willRefresh?: boolean;
 }
 
 export function SignalsPanel({ companyId }: SignalsPanelProps) {
@@ -63,7 +64,10 @@ export function SignalsPanel({ companyId }: SignalsPanelProps) {
             if (event.type === "cached") {
               setSignals(event.signals ?? []);
               setLoadingCache(false);
-              setRefreshing(true);
+              setRefreshing(event.willRefresh === true);
+              if (event.lastAnalyzedAt) {
+                setAnalyzedAt(new Date(event.lastAnalyzedAt));
+              }
             } else if (event.type === "signal" && event.signal) {
               setSignals((prev) => {
                 const next = [event.signal!, ...(prev ?? [])];

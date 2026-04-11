@@ -127,18 +127,26 @@ export async function GET(
           return close();
         }
 
-        // 2. Send the cached signals first (instant feedback)
+        // 2. Send the cached signals first (instant feedback).
+        // Include the most recent analyzedAt and a willRefresh flag so the
+        // client can display a stable timestamp and avoid flickering the
+        // refresh indicator on warm-cache visits.
         const existing = await db.signal.findMany({
           where: { companyId },
           orderBy: { analyzedAt: "desc" },
         });
-        send({ type: "cached", signals: existing.map(toSignalDTO) });
+        const isFresh =
+          company.lastSignalRefresh !== null &&
+          Date.now() - company.lastSignalRefresh.getTime() < CACHE_TTL_MS;
+        send({
+          type: "cached",
+          signals: existing.map(toSignalDTO),
+          lastAnalyzedAt: existing[0]?.analyzedAt.toISOString() ?? null,
+          willRefresh: !isFresh,
+        });
 
         // 3. Cache freshness check — skip refresh if last attempt was recent
-        if (
-          company.lastSignalRefresh &&
-          Date.now() - company.lastSignalRefresh.getTime() < CACHE_TTL_MS
-        ) {
+        if (isFresh) {
           send({ type: "done" });
           return close();
         }
