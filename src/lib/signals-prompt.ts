@@ -9,6 +9,7 @@ export interface CompanyContext {
 export interface PromptArticle {
   title: string;
   url: string;
+  publishedAt?: string; // DD/MM/YYYY, already formatted
 }
 
 /**
@@ -53,7 +54,10 @@ export function buildSignalsPrompt(
   scoresContext: string
 ): string {
   const articlesList = articles
-    .map((a, i) => `${i + 1}. ${a.title} | ${a.url}`)
+    .map((a, i) => {
+      const datePart = a.publishedAt ? `[${a.publishedAt}] ` : "";
+      return `${i + 1}. ${datePart}${a.title} | ${a.url}`;
+    })
     .join("\n");
 
   return `${company.name} (${company.ticker}, ${company.sector}). Scores DEU: ${scoresContext}.
@@ -62,7 +66,7 @@ Nouvelles actualités:
 ${articlesList}
 
 Pour chaque actualité, génère un signal JSON. IMPORTANT: retourne un JSON array valide, sans trailing commas.
-Champs: type ("positive"/"negative"/"neutral"), title, summary (1 phrase), justification (1 phrase: pourquoi haussier/baissier pour le cours), theme ("risk"/"strategy"/null), sourceUrl, date (JJ/MM/AAAA), relatedRisks (liste courte).
+Champs: type ("positive"/"negative"/"neutral"), title, summary (1 phrase), justification (1 phrase: pourquoi haussier/baissier pour le cours), theme ("risk"/"strategy"/null), sourceUrl, date (format DD/MM/YYYY, reprends exactement la date de publication indiquée entre crochets pour l'actualité correspondante), relatedRisks (liste courte).
 
 JSON array uniquement:`;
 }

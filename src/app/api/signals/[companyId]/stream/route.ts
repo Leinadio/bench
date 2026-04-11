@@ -78,11 +78,28 @@ function normalizeRawSignal(raw: RawSignal): {
     justification: (raw.justification ?? "").slice(0, 1000),
     theme,
     sourceUrl: (raw.sourceUrl ?? "").trim(),
-    date: raw.date && typeof raw.date === "string" ? raw.date : today,
+    date:
+      raw.date && typeof raw.date === "string" && /^\d{2}\/\d{2}\/\d{4}$/.test(raw.date)
+        ? raw.date
+        : today,
     relatedRisks: Array.isArray(raw.relatedRisks)
       ? (raw.relatedRisks.filter((r) => typeof r === "string") as string[])
       : [],
   };
+}
+
+/**
+ * Convert an RFC822 date string (from RSS `<pubDate>`) to `DD/MM/YYYY`.
+ * Returns an empty string if parsing fails.
+ */
+function formatRssDate(rfc822: string): string {
+  if (!rfc822) return "";
+  const d = new Date(rfc822);
+  if (isNaN(d.getTime())) return "";
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
 }
 
 export async function GET(
@@ -187,7 +204,11 @@ export async function GET(
               ticker: company.ticker,
               sector: company.sector,
             },
-            newArticles.map((a) => ({ title: a.title, url: a.url })),
+            newArticles.map((a) => ({
+              title: a.title,
+              url: a.url,
+              publishedAt: formatRssDate(a.publishedAt),
+            })),
             scoresContext
           );
 
