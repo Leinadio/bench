@@ -18,7 +18,8 @@ model Company {
   summaries CompanySummary[]
   signals   Signal[]
 
-  createdAt DateTime @default(now())
+  createdAt         DateTime  @default(now())
+  lastSignalRefresh DateTime?
 }
 
 model Filing {
