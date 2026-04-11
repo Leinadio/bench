@@ -228,7 +228,21 @@ export async function GET(
                   });
                   send({ type: "signal", signal: toSignalDTO(stored) });
                 } catch (err) {
-                  console.error("[signals-stream] DB insert failed:", err);
+                  // P2002 = Prisma unique constraint violation. A concurrent
+                  // request already inserted this signal — skip silently.
+                  if (
+                    err &&
+                    typeof err === "object" &&
+                    "code" in err &&
+                    (err as { code: string }).code === "P2002"
+                  ) {
+                    console.info(
+                      "[signals-stream] Signal already exists (concurrent insert), skipping:",
+                      normalized.sourceUrl
+                    );
+                  } else {
+                    console.error("[signals-stream] DB insert failed:", err);
+                  }
                 }
               }
             }

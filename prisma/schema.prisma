@@ -110,5 +110,6 @@ model Signal {
 
   analyzedAt   DateTime @default(now())
 
+  @@unique([companyId, sourceUrl])
   @@index([companyId])
 }
