@@ -57,6 +57,7 @@ export interface Signal {
   type: "positive" | "negative" | "neutral";
   title: string;
   summary: string;
+  justification: string;
   theme: Theme | null;
   sourceUrl: string;
   date: string;

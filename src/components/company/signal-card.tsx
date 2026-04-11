@@ -9,9 +9,9 @@ import type { Signal, Theme } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const TYPE_CONFIG = {
-  positive: { label: "Positif", dot: "bg-emerald-500", text: "text-emerald-700" },
-  negative: { label: "Négatif", dot: "bg-red-500", text: "text-red-700" },
-  neutral: { label: "Neutre", dot: "bg-gray-400", text: "text-gray-600" },
+  positive: { label: "Haussier", dot: "bg-emerald-500", bg: "bg-emerald-50 dark:bg-emerald-950/30", text: "text-emerald-700 dark:text-emerald-400", arrow: "\u2197" },
+  negative: { label: "Baissier", dot: "bg-red-500", bg: "bg-red-50 dark:bg-red-950/30", text: "text-red-700 dark:text-red-400", arrow: "\u2198" },
+  neutral: { label: "Neutre", dot: "bg-gray-400", bg: "bg-gray-50 dark:bg-gray-900/30", text: "text-gray-600 dark:text-gray-400", arrow: "\u2192" },
 };
 
 export function SignalCard({ signal, companyId }: { signal: Signal; companyId: string }) {
@@ -37,11 +37,19 @@ export function SignalCard({ signal, companyId }: { signal: Signal; companyId: s
                 {THEME_LABELS[signal.theme as Theme] ?? signal.theme}
               </Badge>
             )}
+            <span className={cn("inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full", config.bg, config.text)}>
+              {config.arrow} {config.label}
+            </span>
           </div>
         </div>
         <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
           {signal.summary}
         </p>
+        {signal.justification && (
+          <p className={cn("text-xs mt-1.5 leading-relaxed", config.text)}>
+            {config.arrow} {signal.justification}
+          </p>
+        )}
         {signal.relatedRisks && signal.relatedRisks.length > 0 && (
           <div className="flex flex-wrap items-center gap-1.5 mt-2">
             <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0" />

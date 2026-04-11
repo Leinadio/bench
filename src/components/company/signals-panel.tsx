@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { SignalCard } from "./signal-card";
-import { Zap, RefreshCw } from "lucide-react";
+import { Zap } from "lucide-react";
 import type { Signal } from "@/lib/types";
 
 interface SignalsPanelProps {
@@ -11,28 +10,20 @@ interface SignalsPanelProps {
   companyName: string;
 }
 
-export function SignalsPanel({ companyId, companyName }: SignalsPanelProps) {
+export function SignalsPanel({ companyId }: SignalsPanelProps) {
   const [signals, setSignals] = useState<Signal[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [articleCount, setArticleCount] = useState(0);
-
-  const fetchSignals = async (refresh = false) => {
-    setLoading(true);
-    try {
-      const url = `/api/signals/${companyId}${refresh ? "?refresh=1" : ""}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      setSignals(data.signals);
-      setArticleCount(data.articleCount);
-    } catch {
-      setSignals([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [analyzedAt, setAnalyzedAt] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchSignals();
+    fetch(`/api/signals/${companyId}`)
+      .then((r) => r.json())
+      .then((data) => {
+        setSignals(data.signals);
+        setAnalyzedAt(data.analyzedAt);
+      })
+      .catch(() => setSignals([]))
+      .finally(() => setLoading(false));
   }, [companyId]);
 
   return (
@@ -40,18 +31,18 @@ export function SignalsPanel({ companyId, companyName }: SignalsPanelProps) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
           <Zap className="w-5 h-5 text-primary" />
-          <h2 className="text-2xl">Signaux récents</h2>
+          <h2 className="text-2xl">Signaux r&eacute;cents</h2>
         </div>
-        {signals !== null && !loading && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => fetchSignals(true)}
-            className="text-xs gap-1.5"
-          >
-            <RefreshCw className="w-3 h-3" />
-            Rafra&icirc;chir
-          </Button>
+        {analyzedAt && (
+          <span className="text-xs text-muted-foreground">
+            Mis &agrave; jour{" "}
+            {new Date(analyzedAt).toLocaleDateString("fr-FR", {
+              day: "2-digit",
+              month: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </span>
         )}
       </div>
 
@@ -59,10 +50,16 @@ export function SignalsPanel({ companyId, companyName }: SignalsPanelProps) {
         <div className="flex items-center gap-2 text-sm text-muted-foreground py-8 justify-center">
           <div className="flex gap-1.5">
             <span className="w-2 h-2 rounded-full bg-primary/50 loading-dot" />
-            <span className="w-2 h-2 rounded-full bg-primary/50 loading-dot" style={{ animationDelay: "0.2s" }} />
-            <span className="w-2 h-2 rounded-full bg-primary/50 loading-dot" style={{ animationDelay: "0.4s" }} />
+            <span
+              className="w-2 h-2 rounded-full bg-primary/50 loading-dot"
+              style={{ animationDelay: "0.2s" }}
+            />
+            <span
+              className="w-2 h-2 rounded-full bg-primary/50 loading-dot"
+              style={{ animationDelay: "0.4s" }}
+            />
           </div>
-          Analyse de {companyName} en cours...
+          Chargement des signaux...
         </div>
       )}
 
@@ -70,9 +67,7 @@ export function SignalsPanel({ companyId, companyName }: SignalsPanelProps) {
         <>
           {signals.length === 0 ? (
             <p className="text-sm text-muted-foreground py-4">
-              {articleCount === 0
-                ? "Aucune actualit\u00e9 r\u00e9cente trouv\u00e9e."
-                : "Aucun signal identifi\u00e9."}
+              Aucun signal disponible.
             </p>
           ) : (
             <div className="space-y-3">
@@ -88,7 +83,8 @@ export function SignalsPanel({ companyId, companyName }: SignalsPanelProps) {
             </div>
           )}
           <p className="text-xs text-muted-foreground mt-4">
-            Analyse crois&eacute;e DEU × actualit&eacute;s ({articleCount} articles). Ne constitue pas un conseil d&apos;investissement.
+            Analyse crois&eacute;e DEU &times; actualit&eacute;s. Ne constitue
+            pas un conseil d&apos;investissement.
           </p>
         </>
       )}

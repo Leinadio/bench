@@ -96,9 +96,6 @@ export function ThemeCard({ summary, sourceSections }: ThemeCardProps) {
                   <span className="text-sm font-medium flex-1">
                     {group.category}
                   </span>
-                  <span className="text-xs text-muted-foreground tabular-nums">
-                    {group.points.length}
-                  </span>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <ul className="space-y-2 pl-9 pr-3 pb-2">

@@ -16,6 +16,7 @@ model Company {
   country String   @default("FR")
   filings   Filing[]
   summaries CompanySummary[]
+  signals   Signal[]
 
   createdAt DateTime @default(now())
 }
@@ -89,5 +90,24 @@ model CompanySummary {
   createdAt DateTime @default(now())
 
   @@unique([filingId, theme])
+  @@index([companyId])
+}
+
+model Signal {
+  id        String @id @default(cuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id])
+
+  type          String   // positive, negative, neutral
+  title         String
+  summary       String
+  justification String   @default("")
+  theme         String?  // risk, strategy, or null
+  sourceUrl    String
+  date         String
+  relatedRisks Json     // string[]
+
+  analyzedAt   DateTime @default(now())
+
   @@index([companyId])
 }
