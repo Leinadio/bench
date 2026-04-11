@@ -75,9 +75,15 @@ export function SignalsPanel({ companyId }: SignalsPanelProps) {
             } else if (event.type === "error") {
               setError(event.message ?? "Erreur inconnue");
               setRefreshing(false);
+              setLoadingCache(false);
+              setSignals((prev) => prev ?? []);
             }
           }
         }
+
+        // Defensive: if the stream closed without a done/error event,
+        // clear the refreshing indicator so we don't show the spinner forever.
+        setRefreshing(false);
       } catch (err) {
         if ((err as Error).name === "AbortError") return;
         console.error("[SignalsPanel] Stream error:", err);
@@ -156,7 +162,7 @@ export function SignalsPanel({ companyId }: SignalsPanelProps) {
             <div className="space-y-3">
               {signals.map((signal, i) => (
                 <div
-                  key={`${signal.sourceUrl}-${i}`}
+                  key={signal.sourceUrl}
                   className="animate-fade-in-up"
                   style={{ animationDelay: i < 5 ? `${i * 0.05}s` : "0s" }}
                 >
