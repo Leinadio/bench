@@ -34,12 +34,41 @@ export default function CompanyLayout({
   const pathname = usePathname();
   const [company, setCompany] = useState<CompanyDetailData | null>(null);
   const [activeFilingIndex, setActiveFilingIndex] = useState(0);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     fetch(`/api/companies/${params.id}`)
-      .then((r) => r.json())
-      .then(setCompany);
+      .then((r) => {
+        if (!r.ok) {
+          setNotFound(true);
+          return null;
+        }
+        return r.json();
+      })
+      .then((data) => {
+        if (data) setCompany(data);
+      })
+      .catch(() => setNotFound(true));
   }, [params.id]);
+
+  if (notFound)
+    return (
+      <div className="max-w-4xl mx-auto">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 font-medium transition-colors mb-6 group"
+        >
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+          Entreprises
+        </Link>
+        <div className="flex flex-col items-center justify-center h-64 text-center">
+          <p className="text-lg font-medium mb-2">Entreprise introuvable</p>
+          <p className="text-sm text-muted-foreground">
+            Cette entreprise n&apos;existe pas ou a &eacute;t&eacute; supprim&eacute;e.
+          </p>
+        </div>
+      </div>
+    );
 
   if (!company)
     return (
