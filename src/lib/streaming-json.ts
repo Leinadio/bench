@@ -56,19 +56,23 @@ export function createJsonObjectStreamParser(): JsonObjectStreamParser {
             }
             depth++;
           } else if (ch === "}") {
-            depth--;
-            if (depth === 0 && objectStartIdx !== -1) {
-              const objText = buffer.slice(objectStartIdx, position + 1);
-              try {
-                completed.push(JSON.parse(objText));
-              } catch (err) {
-                console.error(
-                  "[streaming-json] Failed to parse object:",
-                  objText.slice(0, 200),
-                  err
-                );
+            // Stray "}" outside any object is silently ignored — guards
+            // against malformed input desyncing the depth counter.
+            if (depth > 0) {
+              depth--;
+              if (depth === 0 && objectStartIdx !== -1) {
+                const objText = buffer.slice(objectStartIdx, position + 1);
+                try {
+                  completed.push(JSON.parse(objText));
+                } catch (err) {
+                  console.error(
+                    "[streaming-json] Failed to parse object:",
+                    objText.slice(0, 200),
+                    err
+                  );
+                }
+                objectStartIdx = -1;
               }
-              objectStartIdx = -1;
             }
           }
         }
