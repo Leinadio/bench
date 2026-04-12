@@ -5,7 +5,7 @@ import { useParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import { CompanySnapshot } from "@/components/company/company-snapshot";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, FileText, Zap } from "lucide-react";
+import { ArrowLeft, FileText, Zap, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CompanySummary } from "@/lib/types";
 
@@ -96,6 +96,7 @@ export default function CompanyLayout({
   const basePath = `/company/${params.id}`;
   const isAnalysis = pathname === basePath;
   const isSignals = pathname === `${basePath}/signals`;
+  const isPerspective = pathname === `${basePath}/perspective`;
 
   const navItems = [
     { href: basePath, label: "Analyse", icon: FileText, active: isAnalysis },
@@ -104,6 +105,12 @@ export default function CompanyLayout({
       label: "Signaux",
       icon: Zap,
       active: isSignals,
+    },
+    {
+      href: `${basePath}/perspective`,
+      label: "Perspective",
+      icon: TrendingUp,
+      active: isPerspective,
     },
   ];
 
