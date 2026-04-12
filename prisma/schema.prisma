@@ -17,9 +17,11 @@ model Company {
   filings   Filing[]
   summaries CompanySummary[]
   signals   Signal[]
+  perspective Perspective?
 
   createdAt         DateTime  @default(now())
   lastSignalRefresh DateTime?
+  lastPerspectiveRefresh DateTime?
 }
 
 model Filing {
@@ -112,4 +114,19 @@ model Signal {
 
   @@unique([companyId, sourceUrl])
   @@index([companyId])
+}
+
+model Perspective {
+  id        String @id @default(cuid())
+  companyId String @unique
+  company   Company @relation(fields: [companyId], references: [id])
+
+  bias       String   // fortement_haussier, prudemment_haussier, neutre, prudemment_baissier, fortement_baissier
+  conviction String   // faible, moyenne, forte
+  summary    String
+  risks      Json     // { title: string, description: string }[]
+  catalysts  Json     // { title: string, description: string }[]
+  metrics    Json     // { signalsBullish, signalsBearish, signalsNeutral, riskScore, strategyScore, totalSignals }
+
+  generatedAt DateTime @default(now())
 }
