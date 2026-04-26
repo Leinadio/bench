@@ -8,7 +8,6 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ScoreBar } from "./score-bar";
 import type { CompanyWithSummaries } from "@/lib/types";
 
 export function CompanyCard({
@@ -18,7 +17,6 @@ export function CompanyCard({
   sector,
   filings,
   globalSummary,
-  themeSummaries,
 }: CompanyWithSummaries) {
   return (
     <Link href={`/company/${id}`} className="group block">
@@ -26,20 +24,16 @@ export function CompanyCard({
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>{name}</CardTitle>
-            <Badge variant="outline" className="font-mono text-xs">
-              {ticker}
-            </Badge>
+            <Badge variant="outline" className="font-mono text-xs">{ticker}</Badge>
           </div>
           <CardDescription>{sector}</CardDescription>
         </CardHeader>
         <CardContent>
-          {themeSummaries.length > 0 ? (
-            <ScoreBar summaries={themeSummaries} size="sm" />
+          {filings.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Aucun DEU index&eacute;</p>
           ) : (
             <p className="text-sm text-muted-foreground">
-              {filings.length > 0
-                ? "Fiches en cours..."
-                : "Aucun DEU index\u00e9"}
+              {filings.length} DEU index&eacute;{filings.length > 1 ? "s" : ""}
             </p>
           )}
         </CardContent>

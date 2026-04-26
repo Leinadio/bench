@@ -8,8 +8,6 @@ export const THEME_LABELS: Record<Theme, string> = {
   global: "Global",
 };
 
-export const THEME_ORDER: Theme[] = ["risk", "strategy"];
-
 export interface BulletCategory {
   category: string;
   points: string[];
@@ -37,7 +35,6 @@ export interface CompanyWithSummaries {
     sectionCount: number;
   }[];
   globalSummary: CompanySummary | null;
-  themeSummaries: CompanySummary[];
 }
 
 export interface CompanyDetail {
@@ -53,94 +50,18 @@ export interface CompanyDetail {
   }[];
 }
 
-export interface Signal {
-  type: "positive" | "negative" | "neutral";
+export interface RiskFactor {
+  id: string;
   title: string;
-  summary: string;
-  justification: string;
-  theme: Theme | null;
-  sourceUrl: string;
-  date: string;
-  relatedRisks: string[];
+  description: string;
+  impactLevel: string | null;
+  orderIndex: number;
 }
 
-export interface SignalsResponse {
-  signals: Signal[];
-  companyName: string;
-  analyzedAt: string;
-  articleCount: number;
-}
-
-export type Bias =
-  | "fortement_haussier"
-  | "prudemment_haussier"
-  | "neutre"
-  | "prudemment_baissier"
-  | "fortement_baissier";
-
-export type Conviction = "faible" | "moyenne" | "forte";
-
-export interface PerspectiveData {
-  bias: Bias;
-  conviction: Conviction;
-  summary: string;
-  risks: { title: string; description: string }[];
-  catalysts: { title: string; description: string }[];
-  metrics: {
-    signalsBullish: number;
-    signalsBearish: number;
-    signalsNeutral: number;
-    riskScore: number | null;
-    strategyScore: number | null;
-    totalSignals: number;
-  };
-  generatedAt: string;
-}
-
-export interface PerspectiveResponse {
-  perspective: PerspectiveData | null;
-  status: "cached" | "generated" | "insufficient_data" | "error";
+export interface RiskFactorsResponse {
+  riskFactors: RiskFactor[];
+  status: "cached" | "extracted" | "no_filing" | "no_sections" | "error";
   message?: string;
+  filingYear?: number;
+  extractedAt?: string;
 }
-
-export const BIAS_CONFIG: Record<
-  Bias,
-  { label: string; color: string; bgColor: string; arrow: string }
-> = {
-  fortement_haussier: {
-    label: "Fortement haussier",
-    color: "text-emerald-600 dark:text-emerald-400",
-    bgColor: "bg-emerald-50 dark:bg-emerald-950/30",
-    arrow: "\u2197\u2197",
-  },
-  prudemment_haussier: {
-    label: "Prudemment haussier",
-    color: "text-emerald-600 dark:text-emerald-400",
-    bgColor: "bg-emerald-50 dark:bg-emerald-950/30",
-    arrow: "\u2197",
-  },
-  neutre: {
-    label: "Neutre",
-    color: "text-gray-600 dark:text-gray-400",
-    bgColor: "bg-gray-50 dark:bg-gray-900/30",
-    arrow: "\u2192",
-  },
-  prudemment_baissier: {
-    label: "Prudemment baissier",
-    color: "text-red-600 dark:text-red-400",
-    bgColor: "bg-red-50 dark:bg-red-950/30",
-    arrow: "\u2198",
-  },
-  fortement_baissier: {
-    label: "Fortement baissier",
-    color: "text-red-600 dark:text-red-400",
-    bgColor: "bg-red-50 dark:bg-red-950/30",
-    arrow: "\u2198\u2198",
-  },
-};
-
-export const CONVICTION_LABELS: Record<Conviction, string> = {
-  faible: "Faible",
-  moyenne: "Moyenne",
-  forte: "Forte",
-};

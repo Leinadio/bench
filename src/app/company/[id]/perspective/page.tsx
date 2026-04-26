@@ -1,9 +1,13 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { PerspectivePanel } from "@/components/company/perspective-panel";
+import { use } from "react";
+import { RiskFactorsPanel } from "@/components/company/risk-factors-panel";
 
-export default function CompanyPerspectivePage() {
-  const params = useParams();
-  return <PerspectivePanel companyId={params.id as string} />;
+export default function PerspectivePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = use(params);
+  return <RiskFactorsPanel companyId={id} />;
 }

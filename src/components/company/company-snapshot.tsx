@@ -1,4 +1,3 @@
-import { ScoreBar } from "./score-bar";
 import { Badge } from "@/components/ui/badge";
 import type { CompanySummary } from "@/lib/types";
 
@@ -7,28 +6,18 @@ interface CompanySnapshotProps {
   ticker: string;
   sector: string;
   globalSummary: CompanySummary | null;
-  themeSummaries: CompanySummary[];
 }
 
-export function CompanySnapshot({
-  name,
-  ticker,
-  sector,
-  globalSummary,
-  themeSummaries,
-}: CompanySnapshotProps) {
+export function CompanySnapshot({ name, ticker, sector, globalSummary }: CompanySnapshotProps) {
   return (
     <div className="animate-fade-in-up">
       <div className="flex items-baseline gap-3 mb-1">
         <h1 className="text-4xl">{name}</h1>
-        <Badge variant="outline" className="font-mono text-xs">
-          {ticker}
-        </Badge>
+        <Badge variant="outline" className="font-mono text-xs">{ticker}</Badge>
       </div>
       <p className="text-muted-foreground text-base mb-6">{sector}</p>
-      <ScoreBar summaries={themeSummaries} />
       {globalSummary && (
-        <div className="mt-6 p-5 bg-card rounded-xl border border-border">
+        <div className="p-5 bg-card rounded-xl border border-border">
           <p className="text-base leading-relaxed">{globalSummary.summary}</p>
         </div>
       )}

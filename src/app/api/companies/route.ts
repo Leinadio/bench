@@ -51,7 +51,6 @@ export async function GET() {
         sectionCount: f._count.sections,
       })),
       globalSummary: summaries.find((s) => s.theme === "global") || null,
-      themeSummaries: summaries.filter((s) => s.theme !== "global"),
     };
   });
 

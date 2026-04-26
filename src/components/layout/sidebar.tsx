@@ -4,11 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
-import { Building2, ScanSearch, Zap, Moon, Sun } from "lucide-react";
+import { Building2, ScanSearch, Moon, Sun } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Entreprises", icon: Building2 },
-  { href: "/signals", label: "Signaux", icon: Zap },
 ];
 
 export function Sidebar() {

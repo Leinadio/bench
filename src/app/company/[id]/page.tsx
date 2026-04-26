@@ -9,9 +9,11 @@ import {
   TabsTrigger,
   TabsContent,
 } from "@/components/ui/tabs";
-import { THEME_ORDER, THEME_LABELS } from "@/lib/types";
+import { THEME_LABELS } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import type { CompanySummary, Theme } from "@/lib/types";
+
+const THEME_ORDER: Theme[] = ["risk", "strategy"];
 
 interface CompanyDetailData {
   filings: {
