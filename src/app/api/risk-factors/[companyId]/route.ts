@@ -1,18 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import type { RiskFactorsResponse } from "@/lib/types";
+import { parseXhtmlRiskFactors } from "@/lib/xhtml-risk-parser";
+import type { RiskCategory, RiskFactorsResponse } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-function extractImpactLevel(text: string): string | null {
-  const lower = text.toLowerCase();
-  const match =
-    lower.match(/impact\s*(?:potentiel|financier|estimé)?\s*[:\-]\s*([^\n,;.<]{1,30})/i) ||
-    lower.match(/niveau\s*(?:d['']impact|de risque)?\s*[:\-]\s*([^\n,;.<]{1,30})/i);
-  if (!match) return null;
-  return match[1].trim().replace(/\s+/g, " ");
-}
 
 export async function GET(
   _req: NextRequest,
@@ -24,7 +16,7 @@ export async function GET(
     const company = await db.company.findUnique({ where: { id: companyId } });
     if (!company) {
       return NextResponse.json(
-        { riskFactors: [], status: "error", message: "Entreprise introuvable." } satisfies RiskFactorsResponse,
+        { categories: [], status: "error", message: "Entreprise introuvable." } satisfies RiskFactorsResponse,
         { status: 404 }
       );
     }
@@ -36,83 +28,140 @@ export async function GET(
 
     if (!filing) {
       return NextResponse.json({
-        riskFactors: [],
+        categories: [],
         status: "no_filing",
         message: "Aucun dépôt disponible pour cette entreprise.",
       } satisfies RiskFactorsResponse);
     }
 
     // Check cache
-    const existing = await db.riskFactor.findMany({
+    const existingCategories = await db.riskCategory.findMany({
       where: { filingId: filing.id },
       orderBy: { orderIndex: "asc" },
+      include: {
+        factors: {
+          orderBy: { orderIndex: "asc" },
+          include: { items: { orderBy: { orderIndex: "asc" } } },
+        },
+      },
     });
 
-    if (existing.length > 0) {
-      return NextResponse.json({
-        riskFactors: existing.map((r) => ({
-          id: r.id,
-          title: r.title,
-          description: r.description,
-          impactLevel: r.impactLevel,
-          orderIndex: r.orderIndex,
+    if (existingCategories.length > 0) {
+      const categories: RiskCategory[] = existingCategories.map((cat) => ({
+        id: cat.id,
+        name: cat.name,
+        orderIndex: cat.orderIndex,
+        factors: cat.factors.map((f) => ({
+          id: f.id,
+          sectionRef: f.sectionRef,
+          title: f.title,
+          criticalityScore: f.criticalityScore,
+          orderIndex: f.orderIndex,
+          items: f.items.map((item) => ({
+            id: item.id,
+            description: item.description,
+            riskManagement: item.riskManagement,
+            orderIndex: item.orderIndex,
+          })),
         })),
+      }));
+      return NextResponse.json({
+        categories,
         status: "cached",
         filingYear: filing.year,
-        extractedAt: existing[0].extractedAt.toISOString(),
+        extractedAt: existingCategories[0].extractedAt.toISOString(),
       } satisfies RiskFactorsResponse);
     }
 
-    // Extract from sections
-    const sections = await db.section.findMany({
-      where: { filingId: filing.id, category: "risk" },
-      orderBy: { orderIndex: "asc" },
-    });
-
-    if (sections.length === 0) {
+    // No cache: need local XHTML file
+    if (!filing.localPath) {
       return NextResponse.json({
-        riskFactors: [],
-        status: "no_sections",
-        message: "Aucune section de facteurs de risque trouvée dans ce dépôt.",
+        categories: [],
+        status: "no_local_path",
+        message: "Aucun fichier local configuré pour ce dépôt.",
       } satisfies RiskFactorsResponse);
     }
 
-    // Prefer sub-sections (depth > 1), fall back to top-level sections
-    const subSections = sections.filter((s) => s.depth > 1);
-    const source = subSections.length > 0 ? subSections : sections;
+    // Parse XHTML and persist
+    const parsed = parseXhtmlRiskFactors(filing.localPath);
 
-    const toCreate = source.map((s, i) => ({
-      companyId,
-      filingId: filing.id,
-      title: s.heading,
-      description: s.content,
-      impactLevel: extractImpactLevel(s.heading + " " + s.content),
-      orderIndex: i,
-    }));
+    if (parsed.length === 0) {
+      return NextResponse.json({
+        categories: [],
+        status: "no_sections",
+        message: "Aucun facteur de risque trouvé dans le fichier.",
+      } satisfies RiskFactorsResponse);
+    }
 
-    await db.riskFactor.createMany({ data: toCreate, skipDuplicates: true });
+    let globalFactorIndex = 0;
+    const createdCategories: RiskCategory[] = [];
 
-    const stored = await db.riskFactor.findMany({
-      where: { filingId: filing.id },
-      orderBy: { orderIndex: "asc" },
-    });
+    for (const parsedCat of parsed) {
+      const cat = await db.riskCategory.create({
+        data: {
+          companyId,
+          filingId: filing.id,
+          name: parsedCat.name,
+          orderIndex: parsedCat.orderIndex,
+        },
+      });
+
+      const factors: RiskCategory["factors"] = [];
+      for (const f of parsedCat.factors) {
+        const factor = await db.riskFactor.create({
+          data: {
+            companyId,
+            filingId: filing.id,
+            categoryId: cat.id,
+            sectionRef: f.sectionRef,
+            title: f.title,
+            criticalityScore: f.criticalityScore,
+            orderIndex: globalFactorIndex++,
+          },
+        });
+
+        const items = await db.riskFactorItem.createManyAndReturn({
+          data: f.items.map((item) => ({
+            factorId: factor.id,
+            description: item.description,
+            riskManagement: item.riskManagement,
+            orderIndex: item.orderIndex,
+          })),
+        });
+
+        factors.push({
+          id: factor.id,
+          sectionRef: factor.sectionRef,
+          title: factor.title,
+          criticalityScore: factor.criticalityScore,
+          orderIndex: factor.orderIndex,
+          items: items.map((item) => ({
+            id: item.id,
+            description: item.description,
+            riskManagement: item.riskManagement,
+            orderIndex: item.orderIndex,
+          })),
+        });
+      }
+
+      createdCategories.push({
+        id: cat.id,
+        name: cat.name,
+        orderIndex: cat.orderIndex,
+        factors,
+      });
+    }
 
     return NextResponse.json({
-      riskFactors: stored.map((r) => ({
-        id: r.id,
-        title: r.title,
-        description: r.description,
-        impactLevel: r.impactLevel,
-        orderIndex: r.orderIndex,
-      })),
+      categories: createdCategories,
       status: "extracted",
       filingYear: filing.year,
-      extractedAt: stored[0]!.extractedAt.toISOString(),
+      extractedAt: new Date().toISOString(),
     } satisfies RiskFactorsResponse);
   } catch (err) {
     console.error("[risk-factors] Fatal error:", err);
     return NextResponse.json(
-      { riskFactors: [], status: "error", message: "Erreur lors de la récupération des facteurs de risque." } satisfies RiskFactorsResponse,
+      { categories: [], status: "error", message: "Erreur lors de la récupération des facteurs de risque." } satisfies RiskFactorsResponse,
       { status: 500 }
     );
   }

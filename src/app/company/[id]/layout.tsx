@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import { CompanySnapshot } from "@/components/company/company-snapshot";
-import { ArrowLeft, FileText, TrendingUp } from "lucide-react";
+import { ArrowLeft, FileText, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { CompanySummary } from "@/lib/types";
@@ -72,7 +72,7 @@ export default function CompanyLayout({ children }: { children: React.ReactNode 
   const basePath = `/company/${params.id}`;
   const navItems = [
     { href: basePath, label: "Analyse", icon: FileText, active: pathname === basePath },
-    { href: `${basePath}/perspective`, label: "Perspective", icon: TrendingUp, active: pathname === `${basePath}/perspective` },
+    { href: `${basePath}/facteurs-de-risques`, label: "Facteurs de risques", icon: ShieldAlert, active: pathname === `${basePath}/facteurs-de-risques` },
   ];
 
   return (

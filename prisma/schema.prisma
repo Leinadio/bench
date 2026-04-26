@@ -14,9 +14,10 @@ model Company {
   index   String
   sector  String
   country String   @default("FR")
-  filings     Filing[]
-  summaries   CompanySummary[]
-  riskFactors RiskFactor[]
+  filings        Filing[]
+  summaries      CompanySummary[]
+  riskFactors    RiskFactor[]
+  riskCategories RiskCategory[]
 
   createdAt DateTime @default(now())
 }
@@ -27,13 +28,15 @@ model Filing {
   company   Company  @relation(fields: [companyId], references: [id])
   year      Int
   sourceUrl String
+  localPath String?
   status    String   @default("pending")
   parsedAt  DateTime?
 
-  sections      Section[]
-  financialData FinancialData[]
-  summaries     CompanySummary[]
-  riskFactors   RiskFactor[]
+  sections       Section[]
+  financialData  FinancialData[]
+  summaries      CompanySummary[]
+  riskFactors    RiskFactor[]
+  riskCategories RiskCategory[]
 
   createdAt DateTime @default(now())
 
@@ -94,21 +97,56 @@ model CompanySummary {
   @@index([companyId])
 }
 
-model RiskFactor {
+model RiskCategory {
   id          String   @id @default(cuid())
   companyId   String
   company     Company  @relation(fields: [companyId], references: [id])
   filingId    String
   filing      Filing   @relation(fields: [filingId], references: [id])
 
-  title       String
-  description String
-  impactLevel String?
+  name        String
   orderIndex  Int      @default(0)
-
   extractedAt DateTime @default(now())
+
+  factors     RiskFactor[]
 
   @@index([companyId])
   @@index([filingId])
   @@unique([filingId, orderIndex])
+}
+
+model RiskFactor {
+  id          String   @id @default(cuid())
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id])
+  filingId    String
+  filing      Filing   @relation(fields: [filingId], references: [id])
+  categoryId  String
+  category    RiskCategory @relation(fields: [categoryId], references: [id])
+
+  sectionRef        String?
+  title             String
+  criticalityScore  Int      @default(2)
+  orderIndex        Int      @default(0)
+  extractedAt       DateTime @default(now())
+
+  items       RiskFactorItem[]
+
+  @@index([companyId])
+  @@index([filingId])
+  @@index([categoryId])
+  @@unique([filingId, orderIndex])
+}
+
+model RiskFactorItem {
+  id       String     @id @default(cuid())
+  factorId String
+  factor   RiskFactor @relation(fields: [factorId], references: [id])
+
+  description    String
+  riskManagement String
+  orderIndex     Int    @default(0)
+
+  @@index([factorId])
+  @@unique([factorId, orderIndex])
 }

@@ -50,17 +50,32 @@ export interface CompanyDetail {
   }[];
 }
 
-export interface RiskFactor {
+export interface RiskFactorItem {
   id: string;
-  title: string;
   description: string;
-  impactLevel: string | null;
+  riskManagement: string;
   orderIndex: number;
 }
 
+export interface RiskFactor {
+  id: string;
+  sectionRef: string | null;
+  title: string;
+  criticalityScore: number;
+  orderIndex: number;
+  items: RiskFactorItem[];
+}
+
+export interface RiskCategory {
+  id: string;
+  name: string;
+  orderIndex: number;
+  factors: RiskFactor[];
+}
+
 export interface RiskFactorsResponse {
-  riskFactors: RiskFactor[];
-  status: "cached" | "extracted" | "no_filing" | "no_sections" | "error";
+  categories: RiskCategory[];
+  status: "cached" | "extracted" | "no_filing" | "no_local_path" | "no_sections" | "error";
   message?: string;
   filingYear?: number;
   extractedAt?: string;
